@@ -1,91 +1,91 @@
 <script setup>
-import {reactive} from "vue";
-
-const props = defineProps()
-
-const navigation = reactive([
-    {
-        name: "Dashboard",
-        link: "dashboard"
-    },
-    {
-        name: "Matches",
-        link: "dashboard"
-    },
-    {
-        name: "Accounts",
-        link: "dashboard"
-    },
-    {
-        name: "Transactions",
-        link: "dashboard"
-    },
-])
-
-const openMenu = () => {
-    let menu = $('#navigation-menu')
-    menu.css({'width': '100%'})
-}
-const closeMenu = () => {
-    let menu = $('#navigation-menu')
-    menu.css({'width': '0%'})
-}
-
+import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
+import MatchCard from "@/Components/App/MatchCard.vue";
 </script>
-
 <template>
-    <div class="w-full h-[100vh] flex">
-        <section id="navigation-menu"
-                 class="w-[0px] absolute top-0 overflow-hidden lg:hidden h-full bg-black text-white">
-            <div class=" flex justify-end px-[10px]" @click="closeMenu">
-                <img width="30" height="30" src="https://img.icons8.com/material-outlined/48/ffffff/delete-sign.png"
-                     alt="delete-sign"/>
-            </div>
-            <ul class="flex flex-col items-center justify-center h-full bg-">
-                <li class="my-[20px]" v-for="button in navigation">
-                    <Link :href="route(button.link)"
-                          class="block text-[20px] px-[10px] flex items-center justify-center">
-                        <span v-if="route().current() == button.link"
-                              class="w-[14px] h-[14px] bg-gray-100 block mx-[5px] rounded-[50%]"></span>
-                        {{ button.name }}
-                    </Link>
-                </li>
-            </ul>
-        </section>
-        <section class="w-[250px] overflow-hidden hidden lg:block h-full bg-black text-white">
-            <div id="image_display" class=" p-[20px]">
-                <img class="h-[50px]" src="/storage/system/Asset%202.png">
-            </div>
-            <ul class="">
-                <li class="my-[20px]" v-for="button in navigation">
-                    <Link :href="route(button.link)" class="block text-[20px] mx-[10px] py-[5px] px-[10px] rounded"
-                          :class="[route().current() === button.link ?'bg-gray-500':'']"
-                    >
-                        {{ button.name }}
-                    </Link>
-                </li>
-            </ul>
-        </section>
-        <section class="w-[calc(100%-250px)]">
-            <div class="h-[100px] bg-black flex items-center justify-between px-[20px] lg:hidden">
-                <div @click="openMenu">
-                    <img width="30" height="30" src="https://img.icons8.com/stamp/64/ffffff/menu.png" alt="menu"/>
+    <DashboardLayout>
+        <div class="w-full px-[10px] pb-[30px] mx-auto md:max-w-[750px] rounded">
+            <div class="flex gap-2 flex-wrap md:flex-nowrap">
+                <div class="shadow-lg w-[95%] md:w-[50%] mb-[50px] rounded-[10px] p-[10px] bg-white text-gray-600 mx-auto">
+                    <p>Hello</p>
+                    <h1 class="font-bold text-[20px] mb-[20px]">Mwaura Kimani</h1>
+                    <h1 class="font-bold text-[20px] text-right mb-[30px]">Ksh 5,000</h1>
+                    <div class="px-[20px] flex justify-between mb-[40px]">
+                        <button class="bg-gray-300 px-[14px] py-[5px] rounded">Deposit</button>
+                        <button class="bg-gray-300 px-[14px] py-[5px] rounded">Withdraw</button>
+                    </div>
+                    <h2 class="text-[20px] mb-[5px]">Transactions</h2>
+                    <table id="leader_board_mobile" class="w-full border">
+                        <thead class="bg-black text-white">
+                        <tr>
+                            <th>Position</th>
+                            <th>Username</th>
+                            <th>Score</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(idx,item) in 5">
+                            <td class="p-[3px]">{{idx}}</td>
+                            <td>Mwaurakimani</td>
+                            <td>100</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div id="image_display">
-                    <img class="h-[50px]" src="/storage/system/Asset%202.png">
-                </div>
-                <Link :href="route('logout')" method="post" class="block" as="button" id="logout_display">
-                    <img width="30" height="30" src="https://img.icons8.com/forma-regular/24/ffffff/exit.png"
-                         alt="exit"/>
-                </Link>
+                <MatchCard></MatchCard>
             </div>
-        </section>
-    </div>
+            <div class="bg-white md:p-[5px] rounded">
+                <div class="flex justify-between items-center mb-[10px]">
+                    <h2 class="text-[20px] mb-[10px]">Current Match</h2>
+                    <div>
+                        <select class="border-gray-500 rounded">
+                            <option value="Daily">Daily</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <table id="leader_board_mobile" class="w-full border">
+                    <thead class="bg-black text-white">
+                    <tr>
+                        <th>Position</th>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(idx,item) in 10">
+                        <td class="p-[10px]">{{idx}}</td>
+                        <td>Mwaurakimani</td>
+                        <td>100</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </DashboardLayout>
 </template>
 
-<style lang="scss">
-#navigation-menu {
-    transition: width 0.3s ease-in-out;
+<style lang="scss" scoped>
+button:active {
+    transition: all ease-in-out 0.3ms;
+    @apply bg-gray-700 text-white;
 }
-</style>
 
+#leader_board_mobile {
+
+    th{
+        height: 30px;
+    }
+    tr:nth-of-type(even){
+        background-color: grey;
+        @apply text-white
+    }
+
+    tr{
+        @apply px-[10px];
+    }
+}
+
+
+</style>

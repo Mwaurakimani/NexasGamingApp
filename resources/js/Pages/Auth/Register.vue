@@ -27,8 +27,8 @@ const submit = () => {
     <div class="pt-[20px]">
         <img class="w-[200px] h-[50px] pb-[10px] object-contain mx-auto" src="/storage/system/Asset%202.png" alt="image">
     </div>
-    <div class=" ">
-        <div class="h-full w-full flex flex-col items-center pt-[20px]" id="input-panel">
+    <div class="h-[100vh] md:pt-[30px]">
+        <div class="h-full w-full flex flex-col items-center pt-[20px] md:!rounded-[6px] md:w-[500px] md:h-fit pb-[30px] md:mx-[auto]" id="input-panel">
             <h1 class="text-black text-[20px] font-bold">SIGN UP</h1>
             <form class="px-[30px] w-full" @submit.prevent="submit">
                 <div class="shadow-lg rounded-lg p-[10px] mb-[20px]">
