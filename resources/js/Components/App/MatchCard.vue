@@ -58,3 +58,6 @@
     }
 }
 </style>
+
+/opt/plesk/php/8.3/bin/php
+
