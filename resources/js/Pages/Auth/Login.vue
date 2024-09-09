@@ -1,24 +1,12 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
-});
+import {Head, Link, useForm} from '@inertiajs/vue3';
+import InputError from "@/Components/InputError.vue";
+import {onMounted} from "vue";
 
 const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
+    email: 'kimmwaus@gmail.com',
+    password: 'password',
 });
-
 const submit = () => {
     form.transform(data => ({
         ...data,
@@ -27,64 +15,74 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+
 </script>
 
 <template>
-    <Head title="Log in" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
+    <Head title="Welcome"/>
+    <div class="pt-[20px]">
+        <img class="w-[200px] h-[50px] pb-[10px] object-contain mx-auto" src="/storage/system/Asset%202.png" alt="image">
+    </div>
+    <div class="h-[100vh]">
+        <div class="h-full w-full flex flex-col items-center pt-[20px]" id="input-panel">
+            <h1 class="text-black text-[20px] font-bold">SIGN IN</h1>
+            <form class="px-[30px] w-full" @submit.prevent="submit">
+                <div class="shadow-lg rounded-lg p-[10px] mb-[20px]">
+                    <label class="block text-[15px]">Email</label>
+                    <input class="" type="email" required v-model="form.email">
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+                <div class="shadow-lg rounded-lg p-[10px] mb-[20px]">
+                    <label class="block text-[15px]">Password</label>
+                    <input class="" type="password" required v-model="form.password">
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+                <section>
+                    <button type="submit" class="bg-black text-white w-full p-[10px] rounded">Sign In</button>
+                    <p class="text-center text-gray-600 mt-[20px] text-[15px]">Dont have an account? <Link class="text-blue-700 underline" href="/register">Register</Link></p>
+                </section>
+            </form>
         </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
+    </div>
 </template>
+
+<style lang="scss" scoped>
+@import "../../../scss/body";
+
+#input-panel {
+    background-color: white;
+    border-top-left-radius: 70px;
+
+    div{
+        transition: all ease-in-out 200ms;
+
+        input {
+            border: none;
+            border-bottom: 1px solid grey;
+            outline: none !important;
+            width: 100%;
+            transition: all ease-in-out 200ms;
+            --tw-ring-shadow: 0 0 #000 !important;
+            box-sizing: border-box;
+
+            &:focus {
+                border-bottom: 1px solid black;
+            }
+
+        }
+
+
+        &:focus-within{
+            transform:scale(1.05);
+        }
+    }
+}
+
+button{
+    &:active{
+        background-color: white;
+        color: grey;
+    }
+}
+</style>
