@@ -19,11 +19,17 @@ return new class extends Migration {
             $table->decimal('balance', 11, 2)->default(0.00);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->unsignedInteger('role_id')->nullable();
+            $table->unsignedBigInteger('role_id')->nullable();
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
+
+            $table->foreign('role_id')
+                ->references('id')
+                ->on('roles')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -39,15 +45,6 @@ return new class extends Migration {
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
-        });
-
-        //create a relation foreign key between user.role to the roles table
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('roles')
-                ->onDelete('restrict')
-                ->onUpdate('cascade');
         });
     }
 
