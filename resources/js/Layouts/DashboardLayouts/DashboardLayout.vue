@@ -23,9 +23,9 @@ const navigation = reactive(navigation_button)
             </div>
             <ul class="flex flex-col items-center justify-center h-full bg-">
                 <li class="my-[20px]" v-for="button in navigation">
-                    <Link :href="button.link"
+                    <Link :href="button.link[0]"
                           class="block text-[20px] px-[10px] flex items-center justify-center">
-                        <span v-if="route().current() == button.link"
+                        <span v-if="button.link.includes(route().current())"
                               class="w-[14px] h-[14px] bg-gray-100 block mx-[5px] rounded-[50%]"></span>
                         {{ button.name }}
                     </Link>
@@ -38,9 +38,9 @@ const navigation = reactive(navigation_button)
             </div>
             <ul class="">
                 <li class="my-[20px] pl-[10px]" v-for="button in navigation">
-                    <Link :href="button.link" class="block text-[20px] py-[5px] px-[10px]"
+                    <Link :href="button.link[0]" class="block text-[20px] py-[5px] px-[10px]"
                           style="border-radius: 5px 0px 0px 5px;"
-                          :class="[route(route().current()) === button.link ?'bg-gray-500':'']"
+                          :class="[button.link.includes(route().current()) ?'bg-gray-500':'']"
                     >
                         {{ button.name }}
                     </Link>

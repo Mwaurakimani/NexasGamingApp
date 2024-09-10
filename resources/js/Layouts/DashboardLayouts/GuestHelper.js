@@ -1,19 +1,28 @@
 const navigation_button = [
     {
         name: "Dashboard",
-        link: route("dashboard")
+        link: [
+            route("dashboard")
+        ]
     },
     {
         name: "Matches",
-        link: route('matches.list')
+        link: [
+            route('matches.list'),
+            route('matches.view_match',[1])
+        ]
     },
     {
-        name: "Accounts",
-        link: route('profile.view')
+        name: "Profile",
+        link: [
+            route('profile.view')
+        ]
     },
     {
         name: "Transactions",
-        link: route('transactions.list')
+        link: [
+            route('transactions.list')
+        ]
     }
 ]
 
