@@ -1,6 +1,7 @@
 <script setup>
-import {reactive} from "vue";
-import {navigation_button, openMenu, closeMenu} from "@/Layouts/DashboardLayouts/GuestHelper.js";
+import {openMenu, closeMenu, add_links} from "@/Layouts/DashboardLayouts/GuestHelper.js";
+import {usePage} from "@inertiajs/vue3";
+import {onMounted} from "vue";
 
 const props = defineProps({
     header_item: {
@@ -9,14 +10,20 @@ const props = defineProps({
         default: "Welcome"
     },
 })
-const navigation = reactive(navigation_button)
+
+const user = usePage().props.auth.user
+const username = usePage().props.auth.user.username
+
+const navigation = add_links(user)
 
 </script>
 
 <template>
     <div class="w-full h-[100vh] flex">
         <section id="navigation-menu"
-                 class="w-[0px] fixed top-0 overflow-hidden lg:hidden h-full bg-black text-white" style="top: 100px;z-index: 1100">
+                 class="w-[0px] fixed top-0 overflow-hidden lg:hidden h-full bg-black text-white"
+                 style="top: 100px;z-index: 1100"
+        >
             <div class="flex justify-end items-end" @click="closeMenu">
                 <img width="30" height="30" src="https://img.icons8.com/material-outlined/48/ffffff/delete-sign.png"
                      alt="delete-sign"/>
@@ -33,15 +40,14 @@ const navigation = reactive(navigation_button)
             </ul>
         </section>
         <section class="w-[250px] hidden lg:block h-full bg-black text-white">
-            <div id="image_display" class="p-[20px] mt-[200px]">
+            <div id="image_display" class="p-[20px] mt-[00px]">
                 <img class="h-[50px]" src="/storage/system/Asset%202.png">
             </div>
             <ul class="">
-                <li class="my-[20px] pl-[10px]" v-for="button in navigation">
+                <li class="my-[10px] pl-[10px]" v-for="button in navigation">
                     <Link :href="button.link[0]" class="block text-[20px] py-[5px] px-[10px]"
-                          style="border-radius: 5px 0px 0px 5px;"
-                          :class="[button.link.includes(route().current()) ?'bg-gray-500':'']"
-                    >
+                          style="border-radius: 5px 0px 0px 5px">
+<!--                          :class="[button.link.includes(route(route().current())) ?'text-gray-800 bg-white':'hover:text-white hover:bg-gray-500']"-->
                         {{ button.name }}
                     </Link>
                 </li>
@@ -62,13 +68,14 @@ const navigation = reactive(navigation_button)
                 </Link>
             </div>
             <div class="w-full h-[50px] px-[15px] hidden lg:flex justify-between items-center">
-                <h1 class="text-white text-[20px]">{{ header_item }}</h1>
+                <h1 class="text-white text-[20px]">{{ header_item }} {{username}}</h1>
                 <Link :href="route('logout')" method="post" class="block" as="button" id="logout_display">
                     <img width="30" height="30" src="https://img.icons8.com/forma-regular/24/ffffff/exit.png"
                          alt="exit"/>
                 </Link>
             </div>
-            <div id="display_body" class="w-full lg:h-[calc(100vh-50px)] h-full bg-white overflow-auto lg:!bg-gray-500 p-[15px]" >
+            <div id="display_body"
+                 class="w-full lg:h-[calc(100vh-50px)] h-full bg-white overflow-auto p-[15px]">
                 <slot name="default"></slot>
             </div>
         </section>

@@ -1,4 +1,5 @@
-const navigation_button = [
+
+const guest_navigation_button = [
     {
         name: "Dashboard",
         link: [
@@ -26,6 +27,49 @@ const navigation_button = [
     }
 ]
 
+
+const super_admin_links = [
+    {
+        name: "Dashboard",
+        link: [
+            route("dashboard")
+        ]
+    },
+    {
+        name: "Matches",
+        link: [
+            route('matches.list'),
+            route('matches.view_match',[1])
+        ]
+    },
+    {
+        name: "Profile",
+        link: [
+            route('profile.view')
+        ]
+    },
+    {
+        name: "Transactions",
+        link: [
+            route('transactions.list')
+        ]
+    },
+    {
+        name: "Accounts",
+        link: [
+            route('accounts.list'),
+            route('accounts.view_user',[1])
+        ]
+    },
+]
+
+function add_links(user){
+    if(user.role_name === "Super Admin"){
+        return super_admin_links
+    }
+    return guest_navigation_button
+}
+
 const openMenu = () => {
     let menu = $('#navigation-menu')
     menu.css({'width': '100%'})
@@ -35,7 +79,7 @@ const closeMenu = () => {
     menu.css({'width': '0%'})
 }
 
+
 export {
-    navigation_button,
-    openMenu, closeMenu
+    openMenu, closeMenu,add_links
 }

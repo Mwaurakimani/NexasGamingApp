@@ -18,7 +18,7 @@ class TransactionsController extends Controller
         switch ($role) {
             case 'Super Admin':
                 $transactions = [];
-                $view = 'Views/Super/Transactions';
+                $view = 'Views/Super/Transactions/Transactions';
                 break;
             case 'Admin':
                 $transactions = [];

@@ -53,6 +53,7 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
+        'role_name'
     ];
 
     /**
@@ -71,5 +72,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(role::class, 'role_id', 'id', 'roles');
+    }
+
+    public function getRoleNameAttribute()
+    {
+        return $this->role ? $this->role->name : null;
     }
 }

@@ -4,8 +4,8 @@ import InputError from "@/Components/InputError.vue";
 import {onMounted} from "vue";
 
 const form = useForm({
-    email: 'kimmwaus@gmail.com',
-    password: 'password',
+    email: '',
+    password: '',
 });
 const submit = () => {
     form.transform(data => ({

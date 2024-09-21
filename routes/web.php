@@ -28,15 +28,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
                 'Player', 'Guest' => Inertia::render('Views/Dashboard'),
                 'Moderator' => Inertia::render('Views/Moderator/Dashboard'),
                 'Admin' => Inertia::render('Views/Admin/Dashboard'),
-                'SuperAdmin' => Inertia::render('Views/Super/AdminDashboard'),
+                'Super Admin' => Inertia::render('Views/Super/Dashboard'),
                 default => redirect('/')->with('error', 'You do not have permission to access this page.'),
             };
         } else {
             return redirect('/')->with('error', 'You do not have permission to access this page.');
         }
     })->name('dashboard');
-
-
 
     include_once "Dashboard/index.php";
 });
