@@ -6,7 +6,7 @@ import InputError from "@/Components/InputError.vue";
 
 <template>
     <DashboardLayout>
-        <div class="w-full px-[10px] pb-[30px] justify-between mx-auto md:max-w-[750px] rounded">
+        <div class="w-full px-[10px] pb-[30px] mx-auto md:max-w-[750px] rounded">
             <h1 class="font-bold text-[20px] mb-[5px]">Profile Details</h1>
             <form class="mb-[40px]">
                 <section class=" border-gray-200  overflow-hidden rounded p-[10px]">

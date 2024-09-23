@@ -5,11 +5,24 @@ import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
 import UsuportedDevice from "@/Components/App/UsuportedDevice.vue";
 import Pagination from "@/Components/App/Pagination.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
-import {onMounted, onUpdated, useAttrs} from "vue";
+import {computed, onMounted, onUpdated, useAttrs} from "vue";
 import InputError from "@/Components/InputError.vue";
+import {useUserStore} from "@/Store/UserStore.js"
+import axios from "axios";
 
 const props = defineProps(['account'])
 const attrs = useAttrs()
+const page = usePage();
+const userStore = useUserStore();
+
+const is_owner = computed(() => {
+    const auth_user = page.props.auth.user.id
+    const account_id = props.account
+    return auth_user === account_id
+})
+
+const is_elevated = computed(() => userStore.isSuperAdmin || userStore.isAdmin)
+
 
 const userForm = useForm({
     username: props.account.username,
@@ -38,6 +51,34 @@ onUpdated(() => {
     if (attrs.success_message != null)
         alert(attrs.success_message)
 })
+
+const suspend_account = () => {
+    axios.post(route('accounts.suspend_account_action', [props.account.id]))
+        .then((response) => {
+            const {message} = response.data
+            alert(message)
+        })
+        .catch((error) => {
+            console.log("error: " + error)
+        })
+        .finally(() => {
+            window.location.reload()
+        })
+}
+
+const unsuspend_account = () => {
+    axios.post(route('accounts.unsuspend_account_action', [props.account.id]))
+        .then((response) => {
+            const {message} = response.data
+            alert(message)
+        })
+        .catch((error) => {
+            console.log("error: " + error)
+        })
+        .finally(() => {
+            window.location.reload()
+        })
+}
 </script>
 
 <template>
@@ -50,7 +91,12 @@ onUpdated(() => {
                     <Link as="button" :href="route('accounts.list')">Accounts</Link>
                 </div>
                 <div class="flex gap-x-2 items-center">
-                    <button>Reset</button>
+                    <button :class="[is_owner?'':'hidden']">Reset</button>
+                    <template v-if="is_elevated">
+                        <button v-if="account.Active == 1" @click.prevent="suspend_account">Suspend Account
+                        </button>
+                        <button v-else @click.prevent="unsuspend_account">UnSuspend Account</button>
+                    </template>
                 </div>
             </div>
             <div class="flex gap-x-2 justify-between">
@@ -93,12 +139,12 @@ onUpdated(() => {
                                 </select>
                             </div>
                             <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
-                            <div class="flex justify-end py-[5px]">
+                            <div class="flex justify-end py-[5px]" :class="[is_owner?'':'hidden']">
                                 <button @click.prevent="updateAccount">Save</button>
                             </div>
                         </form>
                     </div>
-                    <div class="shadow-lg rounded-lg p-[15px] mb-[20px]">
+                    <div class="shadow-lg rounded-lg p-[15px] mb-[20px]" :class="[is_owner?'':'hidden']">
                         <h2 class="text-[18px] mb-[5px]">Security</h2>
                         <form class="p-[10px]" @submit.prevent="updatePassword">
                             <div class="flex mb-[10px]">
@@ -125,7 +171,7 @@ onUpdated(() => {
                         </form>
                     </div>
                     <div class="shadow-lg rounded-lg p-[15px] mb-[20px]">
-                        <h2 class="text-[18px] mb-[5px]">Security</h2>
+                        <h2 class="text-[18px] mb-[5px]">Match Details</h2>
                         <div class="h-[40px] flex justify-end">
                             <input class="text rounded-lg border-gray-300 h-[35px]" placeholder="Search by ID...">
                         </div>
@@ -168,15 +214,19 @@ onUpdated(() => {
                         <ul class="text-[14px]">
                             <li class="flex mb-[8px] justify-between">
                                 <p>Date Joined</p>
-                                <p>00/00/0000</p>
+                                <p>{{ new Date(account.created_at).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
                             </li>
                             <li class="flex mb-[8px] justify-between">
                                 <p>Last Update</p>
-                                <p>00/00/0000</p>
+                                <p>{{ new Date(account.updated_at).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
                             </li>
                             <li class="flex mb-[8px] justify-between">
                                 <p>Account Type</p>
-                                <p>Admin</p>
+                                <p>{{account.role_name}}</p>
+                            </li>
+                            <li class="flex mb-[8px] justify-between">
+                                <p>Account Status</p>
+                                <p>{{account.Active ? "Active" : "Suspended"}}</p>
                             </li>
                         </ul>
                     </div>

@@ -1,36 +1,18 @@
 <script setup>
-
 import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
 import UsuportedDevice from "@/Components/App/UsuportedDevice.vue";
 import Pagination from "@/Components/App/Pagination.vue";
-import {reactive, ref, watch} from "vue";
-import {debounce} from "lodash";
-import {router, usePage} from "@inertiajs/vue3";
+import {reactive, ref} from "vue";
 
-const queryParams = {};
-const searchParams = new URLSearchParams(window.location.search);
-searchParams.forEach((value, key) => {
-    queryParams[key] = value;
-});
-const search_term = ref(queryParams?.search || '')
-
-const props = defineProps(['payload'])
-
-const search_user = debounce(() => {
-    router.get(route("accounts.list", {search: search_term.value}));
-}, 500)
-
-watch(search_term, () => {
-    search_user()
-})
-
+const search_term = ref("")
+const payload = reactive([])
 </script>
 
 <template>
     <DashboardLayout>
         <UsuportedDevice/>
         <section class="hidden lg:block">
-            <h1 class="font-bold text-[20px] mb-[20px]">Accounts</h1>
+            <h1 class="font-bold text-[20px] mb-[20px]">Matches</h1>
             <div class="flex justify-between mb-[10px]">
                 <div>
                 </div>
@@ -43,7 +25,7 @@ watch(search_term, () => {
                 <button v-for="item in 5" class="!rounded-[20px] !px-[8px]">Tag1 <span class="mx-[5px]">X</span>
                 </button>
             </div>
-            <div v-if="payload.data.length > 0">
+            <div v-if="payload.data?.length > 0">
                 <div class="flex justify-between mb-[10px]">
                     <p>{{ payload.data.length }} of {{ payload.total }}</p>
                     <p>Page {{ payload.current_page }} of {{ payload.total }}</p>

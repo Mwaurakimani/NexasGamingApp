@@ -20,6 +20,8 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "lodash": "^4.17.21",
+        "lodash.debounce": "^4.0.8",
         "pinia": "^2.2.2"
     }
 }
