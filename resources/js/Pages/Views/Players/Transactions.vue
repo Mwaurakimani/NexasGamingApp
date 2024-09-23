@@ -1,10 +1,12 @@
 <script setup>
 import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
 import Modal from "@/Components/App/Modal.vue";
-import DepositBox from "@/Components/App/DepositBox.vue";
-import WithdrawalBox from "@/Components/App/WithdrawalBox.vue";
+import DepositBox from "@/Pages/Views/Players/Components/DepositBox.vue";
+import WithdrawalBox from "@/Pages/Views/Players/Components/WithdrawalBox.vue";
 import {shallowRef} from "vue";
 
+
+const props = defineProps(['balance', 'transactions'])
 const component = shallowRef(DepositBox)
 const openModal = (panel) => {
     if (panel === 'deposit')
@@ -31,7 +33,7 @@ const closeModal = () => {
         <div class="shadow-lg w-[100%] md:w-[100%] mb-[50px] rounded-[10px] p-[10px] bg-white text-gray-600 mx-auto">
             <div class="font-bold p-[10px] text-[20px] text-right mb-[30px] flex justify-between">
                 <p>Balance</p>
-                <p>Ksh 5,000</p>
+                <p>(T) {{ balance }}</p>
             </div>
             <div class="px-[20px] flex justify-between mb-[0px]">
                 <button @click.prevent="openModal('deposit')" class="bg-gray-300 px-[14px] py-[5px] rounded">Deposit
@@ -44,7 +46,7 @@ const closeModal = () => {
             class="shadow-lg w-[100%] md:w-[100%] mb-[50px] p-[5px] rounded-[10px] overflow-hidden bg-white text-gray-600 mx-auto">
             <div class="flex justify-between mb-[15px] items-center">
                 <h2 class="text-[18px]  lg:text-white">Current Matches</h2>
-                <select class="border-gray-500 h-[30px] rounded">
+                <select class="border-gray-500 h-[30px] w-[150px] px-[10px] py-0 rounded">
                     <option value="Daily">Daily</option>
                     <option value="Weekly">Weekly</option>
                     <option value="Monthly">Monthly</option>
@@ -53,24 +55,31 @@ const closeModal = () => {
             <table id="leader_board_mobile" class="w-full border mb-[10px]">
                 <thead class="bg-black text-white">
                 <tr>
-                    <th>ID</th>
+                    <th class="text-center">ID</th>
+                    <th>From</th>
                     <th>Amount</th>
-                    <th>Date</th>
                     <th>Type</th>
+                    <th class="w-[170px] text-center px-[10px]">Date</th>
+                    <th>Reference</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(idx,item) in 5">
-                    <td class="p-[3px]">{{ idx }}</td>
-                    <td>Mwaurakimani</td>
-                    <td>100</td>
-                    <td>Deposit</td>
+                <tr v-for="item in transactions.data">
+                    <td class="p-[3px] text-center">{{ item.id }}</td>
+                    <td>{{item.actor_username}}</td>
+                    <td>{{item.amount}}</td>
+                    <td>{{item.transaction_type}}</td>
+                    <td class="text-center px-[30px]">{{(new Date(item.created_at)).toString().split('GMT')[0].trim()}}</td>
+                    <td>{{item.ref ?? "N/A"}}</td>
+                    <td>{{item.status}}</td>
                 </tr>
                 </tbody>
             </table>
             <div class="flex justify-between w-full">
-                <button class="bg-gray-300 px-[14px] py-[5px] rounded">Previous</button>
-                <button class="bg-gray-300 px-[14px] py-[5px] rounded">Next</button>
+                <Link :href="transactions.links[0].url" v-if="transactions.links[0].url" v-html="transactions.links[0].label" class="bg-gray-300 px-[14px] py-[5px] rounded"></Link>
+                <Link :href="transactions.links[transactions.links.length - 1].url" v-if="transactions.links[transactions.links.length - 1].url" v-html="transactions.links[transactions.links.length - 1].label"
+                      class="bg-gray-300 px-[14px] py-[5px] rounded"></Link>
             </div>
         </div>
 

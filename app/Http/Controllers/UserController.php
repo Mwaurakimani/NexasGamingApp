@@ -15,9 +15,38 @@ use JetBrains\PhpStorm\NoReturn;
 class UserController extends Controller
 {
     use PasswordValidationRules;
+
     public function view_current_user_profile(Request $request): \Inertia\Response
     {
-        return Inertia::render('Views/Profile');
+        $user = Auth::user();
+        return Inertia::render('Views/Profile', [
+            'user' => $user
+        ]);
+    }
+
+    public function update_current_user_profile(Request $request)
+    {
+        $this->update_account($request, Auth::user()->id);
+    }
+
+    public function update_current_user_password(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed', // Ensure the new password is confirmed
+            'password_confirmation' => 'required|string|min:8',
+        ]);
+
+        // Check if the current password is correct
+        if (!password_verify($request->current_password, Auth::user()->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        // Update the user's password
+        Auth::user()->update(['password' => bcrypt($request->password)]);
+
+        return back()->with('status', 'Password updated successfully.');
     }
 
     public function list(Request $request): \Inertia\Response
@@ -25,47 +54,47 @@ class UserController extends Controller
 
         $query = $request->query('search');
 
-        $users = User::where('username', 'like', '%'.$query.'%')
-            ->orWhere('email', 'like', '%'.$query.'%')
-            ->orWhere('codm_username', 'like', '%'.$query.'%')
-            ->orWhere('phone_number', 'like', '%'.$query.'%')
-            ->paginate(2);
+        $users = User::where('username', 'like', '%' . $query . '%')
+            ->orWhere('email', 'like', '%' . $query . '%')
+            ->orWhere('codm_username', 'like', '%' . $query . '%')
+            ->orWhere('phone_number', 'like', '%' . $query . '%')
+            ->paginate(10);
 
         $users->appends(['search' => $query]);
 
-        return Inertia::render('Views/Super/Accounts/index',[
+        return Inertia::render('Views/Super/Accounts/index', [
             'payload' => $users
         ]);
     }
 
-    public function view_user(Request $request,$id): \Inertia\Response
+    public function view_user(Request $request, $id): \Inertia\Response
     {
         $user = User::find($id);
 
-        if($user == null)
-            abort('404','User not found');
+        if ($user == null)
+            abort('404', 'User not found');
 
-        return Inertia::render('Views/Super/Accounts/view',[
+        return Inertia::render('Views/Super/Accounts/view', [
             'account' => $user
         ]);
     }
 
-    public function update_account(Request $request,$id): \Illuminate\Http\RedirectResponse
+    public function update_account(Request $request, $id): \Illuminate\Http\RedirectResponse
     {
         $user = User::find($id);
         $role = role::where('name', Auth::user()->role_name)->first();
 
-        if($user == null)
-            abort('404','User not found');
+        if ($user == null)
+            abort('404', 'User not found');
         else if ($role->name != 'Super Admin' && $user->email != Auth::user()->email)
-            abort('403','You can only update your account');
+            abort('403', 'You can only update your account');
 
         Validator::make($request->input(), [
-            'username' => ['required', 'string', 'max:255',Rule::unique('users')->ignore($user->id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'codm_username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone_number' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role_name' => ['required', 'string', 'max:255', Rule::in(['Super Admin', 'Admin', 'Moderator', 'Player', 'Guest'])]
+            'role_name' => ['sometimes|required', 'string', 'max:255', Rule::in(['Super Admin', 'Admin', 'Moderator', 'Player', 'Guest'])]
         ])->validated();
 
         $user->update([
@@ -73,17 +102,23 @@ class UserController extends Controller
             'email' => $request->input('email'),
             'codm_username' => $request->input('codm_username'),
             'phone_number' => $request->input('phone_number'),
-            'role_id' => role::where('name',$request->input('role_name'))->first()->id,
         ]);
 
-        return redirect()->route('accounts.view_user',$user->id)->with('success_message','User Updated successfully');;
+        if ($request->input('role_id'))
+            $user->update([
+                'role_id' => role::where('name', $request->input('role_name'))->first()->id,
+            ]);
+
+
+        return redirect()->route('accounts.view_user', $user->id)->with('success_message', 'User Updated successfully');;
     }
 
-    #[NoReturn] public function update_password(Request $request, User $user){
+    #[NoReturn] public function update_password(Request $request, User $user)
+    {
         Validator::make($request->input(), [
             'current_password' => ['required', 'string', 'current_password:web'],
             'password' => $this->passwordRules(),
-            'password_confirmation' => ['required', 'string','same:password'],
+            'password_confirmation' => ['required', 'string', 'same:password'],
         ], [
             'current_password' => __('The provided password does not match your current password.'),
         ])->validate();
@@ -95,12 +130,12 @@ class UserController extends Controller
         ])->save();
     }
 
-    public function suspend_account(Request $request,$user)
+    public function suspend_account(Request $request, $user)
     {
         $active_user = Auth::user();
         $user = User::findOrFail($user);
 
-        if(str_contains(strtolower($active_user->role_name), 'admin')){
+        if (str_contains(strtolower($active_user->role_name), 'admin')) {
             $user->Active = 0;
             $user->save();
             return [
@@ -112,12 +147,12 @@ class UserController extends Controller
         }
     }
 
-    public function unsuspend_account_action(Request $request,$user)
+    public function unsuspend_account_action(Request $request, $user)
     {
         $active_user = Auth::user();
         $user = User::findOrFail($user);
 
-        if(str_contains(strtolower($active_user->role_name), 'admin')){
+        if (str_contains(strtolower($active_user->role_name), 'admin')) {
             $user->Active = 1;
             $user->save();
             return [

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MatchesController;
+use App\Http\Controllers\Transactions\SystemTransactionsController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::group(['prefix' => 'admin_transactions', 'as' => 'admin_transactions.'],function () {
         Route::get('/', [TransactionsController::class,'list_transactions'])->name('list');
+        Route::post('/transferTokens', [SystemTransactionsController::class,'transferTokens'])->name('transferTokens');
+
     });
 
 });

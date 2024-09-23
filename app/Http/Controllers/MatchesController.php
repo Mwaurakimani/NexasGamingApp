@@ -47,7 +47,6 @@ class MatchesController extends Controller
                 return array_merge($participantArray, $add_on);
             });
 
-
             return Inertia::render('Views/Admin/Matches/UpdateMatch', [
                 'match' => $matches
             ]);

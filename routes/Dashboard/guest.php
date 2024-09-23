@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\MatchesController;
+use App\Http\Controllers\Transactions\SystemTransactionsController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -18,10 +19,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::group(['prefix' => 'profile', 'as' => 'profile.'],function () {
         Route::get('/', [UserController::class,'view_current_user_profile'])->name('view');
+        Route::post('/updateAccount', [UserController::class,'update_current_user_profile'])->name('updateAccount');
+        Route::post('/updateSecurity', [UserController::class,'update_current_user_password'])->name('updateSecurity');
     });
 
     Route::group(['prefix' => 'transactions', 'as' => 'transactions.'],function () {
         Route::get('/', [TransactionsController::class,'list_transactions'])->name('list');
+        Route::post('/deposit', [TransactionsController::class,'deposit'])->name('deposit');
     });
 
 });
