@@ -5,12 +5,12 @@ import {onMounted} from "vue";
 
 
 const form = useForm({
-    username: 'Mwaurakimani',
-    email: 'kimmwaus@gmail.com',
-    phone_number:'+254719445697',
-    codm_username:'Mwaurakimani',
-    password: 'password',
-    password_confirmation: 'password',
+    username: '',
+    email: '',
+    phone_number:'',
+    codm_username:'',
+    password: '',
+    password_confirmation: '',
 });
 
 
