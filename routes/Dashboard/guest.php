@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::group(['prefix' => 'transactions', 'as' => 'transactions.'],function () {
         Route::get('/', [TransactionsController::class,'list_transactions'])->name('list');
         Route::post('/deposit', [TransactionsController::class,'deposit'])->name('deposit');
+        Route::post('/withdraw', [TransactionsController::class,'withdraw'])->name('withdraw');
     });
 
 });

@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
+use App\Models\Deposits;
 use App\Models\Transactions;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\Withdrawals;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class SystemTransactionsController extends Controller
 {
@@ -122,7 +125,7 @@ class SystemTransactionsController extends Controller
             'tokens' => 'required|integer|min:1', // Ensure it's a non-negative integer
         ]);
 
-        //validate password of throw error in the pasword field
+        //validate password or throw error in the password field
         if (!Hash::check($request->password, auth()->user()->password)) {
             throw ValidationException::withMessages([
                 'password' => ['The provided password is incorrect.'],
@@ -140,21 +143,115 @@ class SystemTransactionsController extends Controller
         return $user;
     }
 
+    public function pendingDeposit()
+    {
+        $deposits = Deposits::where('status', 'pending')->paginate(10, ['*'], 'deposits_page');
 
-    function encrypt($plaintext, $key) {
-        $cipher = "aes-256-cbc";
-        $ivlen = openssl_cipher_iv_length($cipher);
-        $iv = openssl_random_pseudo_bytes($ivlen);
-        $ciphertext = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv);
-        return base64_encode($iv . $ciphertext);
+        $deposits->getCollection()->transform(function ($transaction) {
+            $transaction->processed_by = User::find($transaction->processed_by)?->username;
+            $transaction->account = User::find($transaction->user_id)?->username;
+            return $transaction;
+        });
+
+        return Inertia::render('Views/Super/Transactions/PendingDeposits', [
+            "deposits" => $deposits
+        ]);
     }
-    function decrypt($ciphertext, $key) {
-        $cipher = "aes-256-cbc";
-        $ciphertext = base64_decode($ciphertext);
-        $ivlen = openssl_cipher_iv_length($cipher);
-        $iv = substr($ciphertext, 0, $ivlen);     $ciphertext = substr($ciphertext, $ivlen);
-        return openssl_decrypt($ciphertext, $cipher, $key, OPENSSL_RAW_DATA,
-            $iv);
+
+    public function pendingWithdrawal()
+    {
+        $withdrawals = Withdrawals::where('status', 'pending')->paginate(10, ['*'], 'withdrawal_page');
+
+        $withdrawals->getCollection()->transform(function ($transaction) {
+            $transaction->processed_by = User::find($transaction->processed_by)?->username;
+            $transaction->account = User::find($transaction->user_id)?->username;
+            return $transaction;
+        });
+
+        return Inertia::render('Views/Super/Transactions/PendingWithdraw', [
+            "withdrawals" => $withdrawals
+        ]);
+    }
+
+
+    public function updateTransaction(Request $request)
+    {
+        // Validate the request input
+        $validated = $request->validate([
+            'id' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('type') === 'deposit' && !Deposits::where('id', $value)->exists()) {
+                        $fail('The selected deposit id is invalid.');
+                    } elseif ($request->input('type') === 'withdrawal' && !Withdrawals::where('id', $value)->exists()) {
+                        $fail('The selected withdrawal id is invalid.');
+                    }
+                }
+            ],
+            'user_id' => 'required|exists:users,id', // Ensure user_id exists in users table
+            'amount' => 'required|numeric|min:1', // Ensure amount is above 0
+            'transaction_code' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!Deposits::where('transaction_code', $value)->exists() && !Withdrawals::where('transaction_code', $value)->exists()) {
+                        $fail('The selected transaction code is invalid.');
+                    }
+                }
+            ],
+            'status' => 'required|in:processed,rejected', // Status must be one of these values
+            'notes' => 'required|string', // Notes must be included
+            'type' => 'required|in:deposit,withdrawal', // Type must be either deposit or withdrawal
+        ]);
+
+        // Find the transaction based on type
+        $transaction = $validated['type'] === 'deposit'
+            ? Deposits::find($validated['id'])
+            : Withdrawals::find($validated['id']);
+
+        // If no transaction is found, return 404
+        if (!$transaction) {
+            abort(404, 'Transaction not found');
+        }
+
+        $transaction = null;
+        if ($request->input('type') == 'deposit') {
+            $transaction = Deposits::find($request->input('id'));
+        } else if ($request->input('type') == 'withdrawal') {
+            $transaction = Withdrawals::find($request->input('id'));
+        } else {
+            abort(401, "Invalid Entry");
+        }
+
+        $user = User::find($transaction->user_id);
+
+        if ($request->input('status') != 'rejected')
+            $this->updateUsersBalance($transaction->user_id, $request->input('amount'), $request->input('type'));
+
+
+        $transaction->status = $request->input('status');
+        $transaction->processed_by = Auth::user()->id;
+        $transaction->notes = $request->input('notes');
+        $transaction->save();
+
+
+        return redirect()->route('transactions.list');
+    }
+
+    private function updateUsersBalance($user_id, $amount, $type)
+    {
+        $user = User::find($user_id);
+
+        if ($type == 'deposit') {
+            $user->balance = $user->balance + $amount;
+        } else if ($type == 'withdrawal') {
+            if ($user->balance < $amount) {
+                abort(403, 'Insufficient balance to perform withdrawal');
+            }
+
+            $user->balance = $user->balance - $amount;
+        }
+        $user->save();
     }
 
 }

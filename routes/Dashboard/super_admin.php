@@ -27,6 +27,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::group(['prefix' => 'admin_transactions', 'as' => 'admin_transactions.'],function () {
         Route::post('/generateTokens', [SystemTransactionsController::class,'generateTokens'])->name('generateTokens');
         Route::post('/seizeTokens', [SystemTransactionsController::class,'seizeTokens'])->name('seizeTokens');
+
+        Route::get('/pendingDeposit', [SystemTransactionsController::class,'pendingDeposit'])->name('pendingDeposit');
+        Route::get('/pendingWithdrawal', [SystemTransactionsController::class,'pendingWithdrawal'])->name('pendingWithdrawal');
+
+        Route::post('/updateTransaction', [SystemTransactionsController::class,'updateTransaction'])->name('updateTransaction');
     });
 
 });
