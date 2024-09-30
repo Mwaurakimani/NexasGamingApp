@@ -1,7 +1,6 @@
 <script setup>
 import {Head, Link, useForm} from '@inertiajs/vue3';
-import InputError from "@/Components/InputError.vue";
-import {onMounted} from "vue";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 
 const form = useForm({

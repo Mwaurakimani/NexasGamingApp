@@ -5,7 +5,7 @@ import Pagination from "@/Components/App/Pagination.vue";
 import {reactive, ref} from "vue";
 import MatchCard from "@/Components/App/MatchCard.vue";
 
-const props = defineProps(['matches'])
+const props = defineProps(['matches','current_match'])
 const search_term = ref("")
 const payload = reactive(props.matches)
 </script>
@@ -26,11 +26,14 @@ const payload = reactive(props.matches)
                 </article>
             </div>
             <div class="flex mb-[40px] justify-end">
-                <div class="w-full p-[20px]">
-                    <h2>Match Events</h2>
-                    <MatchCard class="w-full" :results="false"></MatchCard>
+                <div class="p-[20px]">
+                    <h2>Current Match</h2>
+                    <MatchCard v-if="current_match" :match="current_match" :fixture="true" class="w-full lg:w-[400px]" :results="false"></MatchCard>
+                    <div class="w-full lg:w-[400px]" v-else>
+                        <p class="text-xl bg-gray-300 text-center py-[20px] rounded">No Matches Available</p>
+                    </div>
                 </div>
-                <div class="w-full p-[20px]">
+                <div class="flex-grow p-[20px]">
                     <h2>Match Templates</h2>
                     <ul class="px-[10px] rounded bg-gray-600 m-[10px]" v-for="item in 5">
                         <li class="h-20">
@@ -38,8 +41,24 @@ const payload = reactive(props.matches)
                         </li>
                     </ul>
                 </div>
+                <div class="hidden lg:block w-[500px] p-[20px]">
+                    <h2>Stats</h2>
+                    <ul class="px-[10px] rounded bg-gray-600 m-[10px]" v-for="item in 5">
+                        <li class="h-20">
+                            <h3 class="text-white p-[10px]">Battle Royal (100-10)</h3>
+                        </li>
+                    </ul>
+                </div>
+                <div class="hidden xxl:block w-[500px] p-[20px]">
+                    <h2>Info</h2>
+                    <ul class="px-[10px] rounded bg-gray-600 m-[10px]" v-for="item in 5">
+                        <li class="h-20">
+                            <h3 class="text-white p-[10px]">Battle Royal (100-10)</h3>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="  bg-white ">
+            <div class="bg-white">
                 <h1 class=" text-[20px] text-center">Matches</h1>
                 <div v-if="payload.data?.length > 0" class="p-[20px]">
                     <div class="flex justify-between mb-[10px]">

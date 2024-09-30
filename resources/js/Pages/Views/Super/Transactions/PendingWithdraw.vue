@@ -1,9 +1,8 @@
 <script setup>
 import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
 import Modal from "@/Components/App/Modal.vue";
-import {onMounted, reactive, watch} from "vue";
 import {useForm} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 
 const props = defineProps(['withdrawals'])
@@ -64,34 +63,25 @@ const updateTransaction = () => {
                             <label class="w-[150px]">Transaction ID:</label>
                             <p>{{ selectedTransaction.id }}</p>
                         </div>
-                        <InputError :message="selectedTransaction.errors.id"></InputError>
 
                         <div class="flex w-full px-[20px] justify-between mb-[10px]">
                             <label class="w-[150px]">Amount:</label>
                             <p>{{ selectedTransaction.amount }}</p>
                         </div>
-                        <InputError :message="selectedTransaction.errors.amount"></InputError>
-
-                        <div class="flex w-full  px-[20px] justify-between mb-[10px]">
-                            <label class="w-[150px]">Created At</label>
-                            <p>{{ (new Date(selectedTransaction.created_at)).toString().split('GMT')[0].trim() }}</p>
-                        </div>
-                        <InputError :message="selectedTransaction.errors.created_at"></InputError>
 
                         <div class="flex  px-[20px] mb-[10px] justify-between">
                             <label class="w-[150px]">Status</label>
                             <select class="w-[150px] border border-gray-500 p-[3px] px-[20px]"
                                     v-model="selectedTransaction.status">
                                 <option value="">Select Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="processed">Processed</option>
                                 <option value="rejected">Rejected</option>
+                                <option value="confirmed">Confirmed</option>
                             </select>
                         </div>
                         <InputError class="mx-[20px]" :message="selectedTransaction.errors.status"></InputError>
 
                         <div
-                            v-if="selectedTransaction.status === 'processed' || selectedTransaction.status === 'rejected' "
+                            v-if="selectedTransaction.status === 'confirmed' || selectedTransaction.status === 'rejected' "
                             class=" px-[20px]">
                             <label class="w-[150px] block">Note</label>
                             <textarea v-model="selectedTransaction.notes" class="w-full border border-gray-500 rounded"
@@ -125,6 +115,7 @@ const updateTransaction = () => {
                     <th>Actor</th>
                     <th>Account</th>
                     <th>Tokens</th>
+                    <th>Mod Status</th>
                     <th>Status</th>
                     <th>Date Time</th>
                     <th>Updated At</th>
@@ -136,6 +127,7 @@ const updateTransaction = () => {
                     <td>{{ item.processed_by ?? "N/A" }}</td>
                     <td>{{ item.account }}</td>
                     <td>{{ item.amount }}</td>
+                    <td>{{ item.moderator_status }}</td>
                     <td>{{ item.status }}</td>
                     <td>{{ (new Date(item.created_at)).toString().split('GMT')[0].trim() }}</td>
                     <td>{{ (new Date(item.updated_at)).toString().split('GMT')[0].trim() }}</td>

@@ -1,13 +1,13 @@
 <script setup>
 import {useForm, usePage} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 const emit = defineEmits(['closePanel'])
 const page = usePage()
 const depositForm = useForm({
-    tokens:500,
-    phone_number : "0719445697",
-    transaction_code : "clksdclknsdklc",
+    tokens:"",
+    phone_number : "",
+    transaction_code : "",
 })
 
 const clearForm = () => {

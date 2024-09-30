@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Matches;
-use App\Models\Participants;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Mockery\Exception;
+use App\Models\Matches;
+use Illuminate\Http\Request;
+use App\Models\Participants;
+use App\Models\Transactions;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\MatchControllerExtensions\MatchesControllerExtension;
+use App\Http\Controllers\MatchControllerExtensions\MatchJoinigControllerExtension;
 
 class MatchesController extends Controller
 {
+
+    use MatchesControllerExtension;
+    use MatchJoinigControllerExtension;
 
     public function ListMatches(Request $request): \Inertia\Response
     {
@@ -18,12 +26,35 @@ class MatchesController extends Controller
 
         if ($role == "Super Admin") {
             $data = $this->admin_list_matches($request);
-            return Inertia::render('Views/Super/Matches/index', [
-                'matches' => $data['matches']
-            ]);
+            return Inertia::render('Views/Super/Matches/index', $data);
         } else {
-            return Inertia::render('Views/Matches');
+            $data = $this->player_list_matches($request);
+            return Inertia::render('Views/Players/Matches/Matches', $data);
         }
+    }
+
+    public function MyMatches(Request $request): \Inertia\Response
+    {
+        $matches = Matches::whereHas('participants', function ($query) {
+            $query->where('user_id', auth()->id()); // Filter by authenticated user's ID
+        })
+            ->whereIn('status', [
+                'Scheduled',
+                'Inactive',
+                'Starting',
+                'Progressing',
+                'Tallying',
+                'Tallied',
+                'Disputed',
+                'Completed'
+            ])
+            ->simplePaginate(10)
+        ;
+
+        return Inertia::render('Views/Players/Matches/MyMatchView', [
+            'matches' => $matches,
+        ]);
+
     }
 
     public function OpenMatches(Request $request, $id): \Inertia\Response
@@ -35,11 +66,11 @@ class MatchesController extends Controller
 
             $matches->participants->transform(function ($participant) {
 
-                $user = User::where('id',$participant->user_id)->first();
+                $user = User::where('id', $participant->user_id)->first();
 
                 $add_on = [
-                    "username" => $user->username,
-                    "codm_username" =>$user->codm_username,
+                    "username"      => $user->username,
+                    "codm_username" => $user->codm_username,
                 ];
 
                 $participantArray = $participant->toArray();
@@ -51,11 +82,15 @@ class MatchesController extends Controller
                 'match' => $matches
             ]);
         } else {
-            return Inertia::render('Views/Players/MatchView');
+            $matches = Matches::with('participants')->find($id);
+
+            return Inertia::render('Views/Players/Matches/MatchView', [
+                'match' => $matches
+            ]);
         }
     }
 
-    public function create()
+    public function create(): \Inertia\Response
     {
         return Inertia::render("Views/Admin/Matches/CreateMatch");
     }
@@ -64,14 +99,13 @@ class MatchesController extends Controller
     {
         // Validate the incoming request...
         $request->validate([
-            'mode' => 'required|string|in:BRS,BRD,BRQ,1v1,2v2,5v5',  // Ensure 'mode' is one of the allowed values
-            'date' => 'required|date_format:Y-m-d',                  // Validate 'date' format as YYYY-MM-DD
-            'teams' => 'required|integer|min:1',                     // 'teams' must be an integer greater than 0
-            'status' => 'required|string|in:Active,Inactive,Pending',// Ensure 'status' is one of the allowed values
-            'time' => 'required|date_format:H:i',                    // Validate 'time' format as HH:MM
-            'stake' => 'required|numeric|min:0',                     // 'stake' must be a numeric value greater than or equal to 0
-        ]);
-
+                               'mode'   => 'required|string|in:BRS,BRD,BRQ,1v1,2v2,5v5',  // Ensure 'mode' is one of the allowed values
+                               'date'   => 'required|date_format:Y-m-d',                  // Validate 'date' format as YYYY-MM-DD
+                               'teams'  => 'required|integer|min:1',                     // 'teams' must be an integer greater than 0
+                               'status' => 'required|string|in:Active,Inactive,Pending',// Ensure 'status' is one of the allowed values
+                               'time'   => 'required|date_format:H:i',                    // Validate 'time' format as HH:MM
+                               'stake'  => 'required|numeric|min:0',                     // 'stake' must be a numeric value greater than or equal to 0
+                           ]);
 
         $match = $request->all();
         $match['moderator_id'] = Auth::user()->id;
@@ -80,36 +114,68 @@ class MatchesController extends Controller
         $match = Matches::create($match);
 
         return redirect()->route('matches.list')
-            ->with('success', 'Match created successfully');
+            ->with('success', 'Match created successfully')
+        ;
     }
 
     public function edit(Request $request, $match)
     {
         // Validate the incoming request...
         $request->validate([
-            'mode' => 'required|string|in:BRS,BRD,BRQ,1v1,2v2,5v5',  // Ensure 'mode' is one of the allowed values
-            'date' => 'required|date_format:Y-m-d',                  // Validate 'date' format as YYYY-MM-DD
-            'teams' => 'required|integer|min:1',                     // 'teams' must be an integer greater than 0
-            'status' => 'required|string|in:Active,Inactive,Pending',// Ensure 'status' is one of the allowed values
-            'time' => 'required|date_format:H:i',                    // Validate 'time' format as HH:MM
-            'stake' => 'required|numeric|min:0', // 'stake' must be a numeric value greater than or equal to 0
-        ]);
+                               'mode'   => 'required|string|in:BRS,BRD,BRQ,1v1,2v2,5v5',  // Ensure 'mode' is one of the allowed values
+                               'date'   => 'required|date_format:Y-m-d',                  // Validate 'date' format as YYYY-MM-DD
+                               'teams'  => 'required|integer|min:1',                     // 'teams' must be an integer greater than 0
+                               'status' => 'required|string|in:Active,Scheduled,Inactive,Starting,Progressing,Tallying,Tallied,Disputed,Completed',
+                               'time'   => 'required|date_format:H:i',                    // Validate 'time' format as HH:MM
+                               'stake'  => 'required|numeric|min:0', // 'stake' must be a numeric value greater than or equal to 0
+                           ]);
 
         $match = Matches::find($match);
 
-        $match = $match->update($request->all());
+        if ($request->input('status') == 'Completed') {
+            try {
+                $mod = User::where('username', 'Super Admin')->first();
+                $user_id = $this->getWinner($match);
+
+                $user = User::find($user_id);
+
+                $transfer = Transactions::create([
+                                                     'sender_id'        => $mod->id,
+                                                     'receiver_id'      => $user_id,
+                                                     'amount'           => $match->stake * 0.9,
+                                                     'transaction_type' => 'Payout',
+                                                     'description'      => 'Payout for Match id' . $match->id,
+                                                     'ref'              => null,
+                                                     'status'           => 'completed',
+                                                 ]);
+
+                $receiver_balance = $user->balance + $match->stake * 0.9;
+                $sender_balance = $mod->balance + $match->stake * 0.9;
+
+                $user->update(['balance' => $receiver_balance]);
+                $mod->update(['balance' => $sender_balance]);
+
+
+            } catch (Exception $e) {
+                Log::info($e->getMessage());
+            }
+        }
+
+        $match->update($request->all());
+
 
         return redirect()->back()
-            ->with('success', 'Match created successfully');
+            ->with('success', 'Match created successfully')
+        ;
 
     }
 
     public function eventEdit(Request $request, $match)
     {
         $request->validate([
-            'pace' => 'nullable|string|in:Normal,Fast,Fast', // Ensure 'pace' is one of the allowed values
-            'notes' => 'nullable|string|max:3000',          // Allow 'notes' to be nullable and limit to 3000 characters
-        ]);
+                               'pace'  => 'nullable|string|in:Normal,Fast,Fast', // Ensure 'pace' is one of the allowed values
+                               'notes' => 'nullable|string|max:3000',          // Allow 'notes' to be nullable and limit to 3000 characters
+                           ]);
 
         // If the request
         $match = Matches::find($match);
@@ -117,16 +183,8 @@ class MatchesController extends Controller
         $match = $match->update($request->all());
 
         return redirect()->back()
-            ->with('success', 'Match updated successfully');
-    }
-
-    public function admin_list_matches($request)
-    {
-        $match = Matches::paginate(2);
-
-        return [
-            'matches' => $match
-        ];
+            ->with('success', 'Match updated successfully')
+        ;
     }
 
     public function get_user_by_name(Request $request)
@@ -136,32 +194,89 @@ class MatchesController extends Controller
         return User::where('username', 'like', '%' . $search_term . '%')
             ->orWhere('codm_username', 'like', '%' . $search_term . '%')
             ->limit(5) // Limit results to 5
-            ->get();
+            ->get()
+        ;
 
     }
 
-    public function addUserToMatch(Request $request)
+    public function addUserToMatch(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
-            'username' => 'required|exists:users,username',
-            'matchId' => 'required|exists:matches,id',
-        ]);
+                               'username' => 'required|exists:users,username',
+                               'matchId'  => 'required|exists:matches,id',
+                           ]);
 
-        $username = $request->input('username');
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $request->input('username'))->first();
         $match = Matches::find($request->input('matchId'));
 
-        if (!$user || !$match)
-            abort(404, "User or Match not found");
+        if (!$user || !$match) abort(404, "User or Match not found");
 
-        if(in_array($user->id, $match->participants->pluck('id')->toArray()))
-            abort(403,"Entry already Exist");
+        if (in_array($user->id, $match->participants->pluck('id')->toArray()))
+            abort(403, "Entry already Exist");
 
-        $participation = Participants::create([
-            'user_id' => $user->id,
-            'match_id' => $match->id,
-        ]);
+        Participants::create([
+                                 'user_id'  => $user->id,
+                                 'match_id' => $match->id,
+                             ]);
 
         return redirect()->back();
     }
+
+    public function joinMatch(Request $request)
+    {
+        $match = Matches::find($request->input('matchId'));
+
+        if (!$match)
+            abort(404, "Match not found");
+
+        if (in_array(Auth::user()->id, $match->participants->pluck('id')->toArray()))
+            abort(403, "You are already in this match");
+
+
+        switch ($match->mode) {
+            case '1v1':
+                $this->one_vs_one_join_match($request, $match->id);
+                break;
+            case '2v2':
+                $this->two_vs_two_join_match($request, $match->id);
+                break;
+            case '5v5':
+                $this->five_vs_five_join_match($request, $match->id);
+                break;
+            case 'BRS':
+                $this->brs_join_match($request, $match->id);
+                break;
+            case 'BRD':
+                $this->brd_join_match($request, $match->id);
+                break;
+            case 'BRQ':
+                $this->brq_join_match($request, $match->id);
+                break;
+            default:
+                abort(403, "Invalid match mode");
+        }
+    }
+
+    public function postResults(Request $request, Matches $match)
+    {
+        $validatedData = $request->validate([
+                                                'kills' => 'required|numeric|min:0|max:100000', // Validate kills as a number between 0 and 100,000
+                                            ]);
+
+        $participation = $match->participants()->where('user_id', auth()->id())->first();
+        $participation->user_score = intval($request->input('kills'));
+        $participation->save();
+
+        return redirect()->back()->with('success', 'Scores Updated...');
+    }
+
+    private function getWinner($match)
+    {
+        $participants = $match->participants;
+        // Get the participant with the highest user_score
+        $winner = $match->participants->sortByDesc('user_score')->first();
+
+        return $winner->user_id;
+    }
+
 }

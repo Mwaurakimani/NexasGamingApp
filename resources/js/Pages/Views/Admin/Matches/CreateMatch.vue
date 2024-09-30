@@ -6,12 +6,12 @@ import {useForm} from "@inertiajs/vue3";
 
 
 const matchForm = useForm({
-    mode: "BRD",
-    date: "2024-09-22",
-    teams: 1,
+    mode: "",
+    date: "",
+    teams: null,
     status: "Active",
-    time: "15:44",
-    stake: 50,
+    time: "",
+    stake: 5,
 })
 
 const save_match = async () => {

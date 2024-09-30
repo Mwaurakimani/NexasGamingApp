@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -17,8 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('processed_by')->nullable();
             $table->decimal('amount', 15, 2);
             $table->string('phone_number');
-            $table->string('transaction_code')->unique();
+            $table->string('transaction_code')->nullable()->unique();
             $table->enum('status', ['pending', 'processed', 'rejected'])->default('pending');
+            $table->enum('player_status', ['pending', 'confirmed','rejected'])->default('pending');
+            $table->enum('moderator_status', ['pending', 'confirmed','rejected'])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

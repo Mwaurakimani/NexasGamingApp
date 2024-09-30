@@ -5,7 +5,7 @@ import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
 import UsuportedDevice from "@/Components/App/UsuportedDevice.vue";
 import Pagination from "@/Components/App/Pagination.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
-import {computed, onMounted, onUpdated, useAttrs} from "vue";
+import {computed, onUpdated, useAttrs} from "vue";
 import InputError from "@/Components/InputError.vue";
 import {useUserStore} from "@/Store/UserStore.js"
 import axios from "axios";

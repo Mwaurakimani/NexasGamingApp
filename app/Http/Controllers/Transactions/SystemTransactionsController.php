@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Transactions;
 
-use App\Http\Controllers\Controller;
-use App\Models\Deposits;
-use App\Models\Transactions;
 use App\Models\User;
+use Inertia\Inertia;
 use App\Models\Wallet;
+use App\Models\Deposits;
 use App\Models\Withdrawals;
+use App\Models\Transactions;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
 
 class SystemTransactionsController extends Controller
 {
@@ -24,11 +24,11 @@ class SystemTransactionsController extends Controller
         $user = $this->validateAccountDetails($request);
 
         $wallet_action = Wallet::create([
-            "actor_id" => Auth::user()->id,
-            "transfer_to" => $request->input('receiver_id'),
-            "tokens" => $request->input('tokens'),
-            "action" => "generated",
-        ]);
+                                            "actor_id"    => Auth::user()->id,
+                                            "transfer_to" => $request->input('receiver_id'),
+                                            "tokens"      => $request->input('tokens'),
+                                            "action"      => "generated",
+                                        ]);
 
         $balance = $user->balance + $request->input('tokens');
         $user->update(['balance' => $balance]);
@@ -40,17 +40,17 @@ class SystemTransactionsController extends Controller
     public function seizeTokens(Request $request)
     {
         $validatedData = $request->validate([
-            'seized_username' => 'required|string|exists:users,username|max:255', // Check if username exists in users table
-            'seized_id' => 'required|exists:users,id', // Check if user ID exists in users table
-            'password' => 'required|string|min:8', // Adjust min length as needed
-            'tokens' => 'required|integer|min:1', // Ensure it's a non-negative integer
-        ]);
+                                                'seized_username' => 'required|string|exists:users,username|max:255', // Check if username exists in users table
+                                                'seized_id'       => 'required|exists:users,id', // Check if user ID exists in users table
+                                                'password'        => 'required|string|min:8', // Adjust min length as needed
+                                                'tokens'          => 'required|integer|min:1', // Ensure it's a non-negative integer
+                                            ]);
 
         //validate password of throw error in the pasword field
         if (!Hash::check($request->password, auth()->user()->password)) {
             throw ValidationException::withMessages([
-                'password' => ['The provided password is incorrect.'],
-            ]);
+                                                        'password' => ['The provided password is incorrect.'],
+                                                    ]);
         }
 
         $user = User::find($request->input('seized_id'));
@@ -58,20 +58,20 @@ class SystemTransactionsController extends Controller
 
         if ($user->username != $request->input('seized_username'))
             throw ValidationException::withMessages([
-                'seized_username' => ['Account Details are incorrect'],
-                'seized_id' => ['Account Details are incorrect'],
-            ]);
+                                                        'seized_username' => ['Account Details are incorrect'],
+                                                        'seized_id'       => ['Account Details are incorrect'],
+                                                    ]);
 
 
         if ($user->balance < $request->input('tokens'))
             abort(403, 'Not enough balance to perform action');
 
         $wallet_action = Wallet::create([
-            "actor_id" => Auth::user()->id,
-            "transfer_to" => $request->input('seized_id'),
-            "tokens" => $request->input('tokens'),
-            "action" => "burned",
-        ]);
+                                            "actor_id"    => Auth::user()->id,
+                                            "transfer_to" => $request->input('seized_id'),
+                                            "tokens"      => $request->input('tokens'),
+                                            "action"      => "burned",
+                                        ]);
 
         $balance = $user->balance - $request->input('tokens');
         $user->update(['balance' => $balance]);
@@ -93,14 +93,14 @@ class SystemTransactionsController extends Controller
 
 
         $transfer = Transactions::create([
-            'sender_id' => $from->id,
-            'receiver_id' => $to->id,
-            'amount' => $request->input('tokens'),
-            'transaction_type' => 'transfer',
-            'description' => "direct transfer",
-            'ref' => null,
-            'status' => 'completed',
-        ]);
+                                             'sender_id'        => $from->id,
+                                             'receiver_id'      => $to->id,
+                                             'amount'           => $request->input('tokens'),
+                                             'transaction_type' => 'transfer',
+                                             'description'      => "direct transfer",
+                                             'ref'              => null,
+                                             'status'           => 'completed',
+                                         ]);
 
         $sender_balance = $from->balance - $request->input('tokens');
         $receiver_balance = $to->balance + $request->input('tokens');
@@ -119,26 +119,26 @@ class SystemTransactionsController extends Controller
     public function validateAccountDetails(Request $request)
     {
         $validatedData = $request->validate([
-            'receiver_username' => 'required|string|exists:users,username|max:255', // Check if username exists in users table
-            'receiver_id' => 'required|exists:users,id', // Check if user ID exists in users table
-            'password' => 'required|string|min:8', // Adjust min length as needed
-            'tokens' => 'required|integer|min:1', // Ensure it's a non-negative integer
-        ]);
+                                                'receiver_username' => 'required|string|exists:users,username|max:255', // Check if username exists in users table
+                                                'receiver_id'       => 'required|exists:users,id', // Check if user ID exists in users table
+                                                'password'          => 'required|string|min:8', // Adjust min length as needed
+                                                'tokens'            => 'required|integer|min:1', // Ensure it's a non-negative integer
+                                            ]);
 
         //validate password or throw error in the password field
         if (!Hash::check($request->password, auth()->user()->password)) {
             throw ValidationException::withMessages([
-                'password' => ['The provided password is incorrect.'],
-            ]);
+                                                        'password' => ['The provided password is incorrect.'],
+                                                    ]);
         }
 
         $user = User::find($request->input('receiver_id'));
 
         if ($user->username != $request->input('receiver_username'))
             throw ValidationException::withMessages([
-                'receiver_username' => ['Account Details are incorrect'],
-                'receiver_id' => ['Account Details are incorrect'],
-            ]);
+                                                        'receiver_username' => ['Account Details are incorrect'],
+                                                        'receiver_id'       => ['Account Details are incorrect'],
+                                                    ]);
 
         return $user;
     }
@@ -178,31 +178,23 @@ class SystemTransactionsController extends Controller
     {
         // Validate the request input
         $validated = $request->validate([
-            'id' => [
-                'required',
-                'integer',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->input('type') === 'deposit' && !Deposits::where('id', $value)->exists()) {
-                        $fail('The selected deposit id is invalid.');
-                    } elseif ($request->input('type') === 'withdrawal' && !Withdrawals::where('id', $value)->exists()) {
-                        $fail('The selected withdrawal id is invalid.');
-                    }
-                }
-            ],
-            'user_id' => 'required|exists:users,id', // Ensure user_id exists in users table
-            'amount' => 'required|numeric|min:1', // Ensure amount is above 0
-            'transaction_code' => [
-                'required',
-                function ($attribute, $value, $fail) use ($request) {
-                    if (!Deposits::where('transaction_code', $value)->exists() && !Withdrawals::where('transaction_code', $value)->exists()) {
-                        $fail('The selected transaction code is invalid.');
-                    }
-                }
-            ],
-            'status' => 'required|in:processed,rejected', // Status must be one of these values
-            'notes' => 'required|string', // Notes must be included
-            'type' => 'required|in:deposit,withdrawal', // Type must be either deposit or withdrawal
-        ]);
+                                            'id'      => [
+                                                'required',
+                                                'integer',
+                                                function ($attribute, $value, $fail) use ($request) {
+                                                    if ($request->input('type') === 'deposit' && !Deposits::where('id', $value)->exists()) {
+                                                        $fail('The selected deposit id is invalid.');
+                                                    } elseif ($request->input('type') === 'withdrawal' && !Withdrawals::where('id', $value)->exists()) {
+                                                        $fail('The selected withdrawal id is invalid.');
+                                                    }
+                                                }
+                                            ],
+                                            'user_id' => 'required|exists:users,id', // Ensure user_id exists in users table
+                                            'amount'  => 'required|numeric|min:1', // Ensure amount is above 0
+                                            'status'  => 'required|in:processed,confirmed,rejected', // Status must be one of these values
+                                            'notes'   => 'required|string', // Notes must be included
+                                            'type'    => 'required|in:deposit,withdrawal', // Type must be either deposit or withdrawal
+                                        ]);
 
         // Find the transaction based on type
         $transaction = $validated['type'] === 'deposit'
@@ -214,24 +206,19 @@ class SystemTransactionsController extends Controller
             abort(404, 'Transaction not found');
         }
 
-        $transaction = null;
-        if ($request->input('type') == 'deposit') {
-            $transaction = Deposits::find($request->input('id'));
-        } else if ($request->input('type') == 'withdrawal') {
-            $transaction = Withdrawals::find($request->input('id'));
-        } else {
-            abort(401, "Invalid Entry");
-        }
-
         $user = User::find($transaction->user_id);
 
         if ($request->input('status') != 'rejected')
             $this->updateUsersBalance($transaction->user_id, $request->input('amount'), $request->input('type'));
 
+        if ($validated['type'] === 'deposit') {
+            $transaction->status = $request->input('status');
+        } else {
+            $transaction->moderator_status = $request->input('status');
+        }
 
-        $transaction->status = $request->input('status');
-        $transaction->processed_by = Auth::user()->id;
         $transaction->notes = $request->input('notes');
+        $transaction->processed_by = Auth::user()->id;
         $transaction->save();
 
 

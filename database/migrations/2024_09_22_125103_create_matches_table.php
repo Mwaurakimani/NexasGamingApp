@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('mode');
             $table->date('date');
             $table->integer('teams');
-            $table->enum('status', ['Active', 'Inactive', 'Pending']);
+            $table->enum('status', ['Active','Scheduled', 'Inactive', 'Starting', 'Progressing', 'Tallying', 'Tallied', 'Disputed', 'Completed']);
             $table->time('time');
             $table->decimal('stake', 15, 2);
             $table->text('link')->nullable();
@@ -29,7 +29,8 @@ return new class extends Migration {
             $table->foreign('moderator_id')
                 ->references('id')
                 ->on('users')
-                ->onDelete('restrict');
+                ->onDelete('restrict')
+            ;
         });
     }
 

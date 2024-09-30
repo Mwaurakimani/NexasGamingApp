@@ -1,6 +1,6 @@
 <script setup>
 import {useForm, usePage} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 const emit = defineEmits(['closePanel'])
 const page = usePage()

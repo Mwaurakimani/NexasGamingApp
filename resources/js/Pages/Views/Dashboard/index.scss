@@ -1,0 +1,21 @@
+button:active {
+  transition: all ease-in-out 0.3ms;
+  @apply bg-gray-700 text-white;
+}
+
+#leader_board_mobile {
+
+  th {
+    height: 30px;
+  }
+
+  tr:nth-of-type(even) {
+    background-color: grey;
+    @apply text-white
+  }
+
+  tr {
+    @apply px-[10px];
+  }
+}
+

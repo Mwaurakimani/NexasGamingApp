@@ -18,7 +18,7 @@ const payload = reactive([])
                 </div>
                 <div class="flex gap-x-2 items-center">
                     <input v-model="search_term" type="search" class="rounded border-gray-300 mx-[10px]"
-                           placeholder="Search...">
+                           placeholder="Search...">Create Matches
                 </div>
             </div>
             <div class="gap-x-2 mb-[10px] hidden">

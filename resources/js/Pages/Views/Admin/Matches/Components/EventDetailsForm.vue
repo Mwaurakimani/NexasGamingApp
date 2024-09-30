@@ -1,7 +1,6 @@
 <script setup>
 
-
-import InputError from "@/Components/InputError.vue";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 const props = defineProps(['EventForm'])
 

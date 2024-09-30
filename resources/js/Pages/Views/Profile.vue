@@ -1,8 +1,7 @@
 <script setup>
 import DashboardLayout from "@/Layouts/DashboardLayouts/DashboardLayout.vue";
-import MatchCard from "@/Components/App/MatchCard.vue";
-import InputError from "@/Components/InputError.vue";
 import {useForm} from "@inertiajs/vue3";
+import InputError from "@/Components/DefaultComponents/InputError.vue";
 
 const props = defineProps(['user']);
 

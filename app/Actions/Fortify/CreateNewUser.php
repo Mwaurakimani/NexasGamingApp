@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Laravel\Jetstream\Jetstream;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -33,7 +32,7 @@ class CreateNewUser implements CreatesNewUsers
             'username' => $input['username'],
             'email' => $input['email'],
             'codm_username' => $input['codm_username'],
-            'phone_number' => $input['email'],
+            'phone_number' => $input['phone_number'],
             'role_id' => role::where('name','Guest')->first()->id,
             'password' => Hash::make($input['password']),
         ]);

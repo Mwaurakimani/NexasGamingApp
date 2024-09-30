@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('match_id');
             $table->unsignedBigInteger('user_id');
+            $table->boolean('grouped')->default(false);
+            $table->boolean('grouped_name')->nullable();
             $table->integer('user_score')->default(0)->nullable();
             $table->integer('moderator_score')->default(0)->nullable();
             $table->string('status')->default("Active");
             $table->decimal('payout',15,2)->default(0);
-            $table->json('results')->nullable()->nullable();
+            $table->json('results')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
