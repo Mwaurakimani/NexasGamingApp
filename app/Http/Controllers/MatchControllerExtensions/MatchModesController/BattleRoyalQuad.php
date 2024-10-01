@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers\MatchControllerExtensions\MatchModesController;
 
-Class BattleRoyalQuad
+
+use App\Http\Controllers\MatchControllerExtensions\AbstractClasses\MatchMode;
+
+Class BattleRoyalQuad extends MatchMode
 {
+    public function __construct()
+    {
+        abort(404,'Mode Not available');
+    }
 }

@@ -2,24 +2,58 @@
 
 namespace App\Http\Controllers\MatchControllerExtensions\MatchModesController;
 
+use App\Models\User;
 use App\Models\Matches;
-use App\Models\Participants;
+use App\Models\Transactions;
+use App\Http\Controllers\MatchControllerExtensions\AbstractClasses\MatchMode;
 
-class BattleRoyalSolos
+class BattleRoyalSolos extends MatchMode
 {
-    public function __construct(Matches $match)
+    public function __construct(Matches $match, $checkCapacity = false)
     {
-        // Check if the match has 100 participants
-        if (Participants::where('match_id', $match->id)->count() >= 100) {
-            abort(401, 'This match is already at capacity.');
-        }
+        $this->setMatch($match);
+        $this->setMaxCapacity(100);
+
+        if ($checkCapacity)
+            $this->checkCapacity();
+
     }
 
-    public function validate_match($match): void
+    /**
+     * @throws \Exception
+     */
+    public function payPlayers(): void
     {
-        if (Participants::where('match_id', $match->id)->count() >= 100) {
-            $match->status = 'Scheduled';
-            $match->save();
+        $match = $this->getMatch();
+        $players = $match->players;
+
+        foreach ($players as $player) {
+            $matchData = $player->matches()->where('match_id', $match->id)->first();
+            $score = $matchData->pivot->user_score != $matchData->pivot->moderator_score
+                ? $matchData->pivot->results ==  null ? $matchData->pivot->user_score : $matchData->pivot->moderator_score
+                : $matchData->pivot->moderator_score;
+            $stake = $match->stake;
+            $grossPayout = $score * $stake;
+            $netPayout = $grossPayout * 0.9;
+
+            $moderator = User::where('username', 'Super Admin')->first();
+
+            $player->balance += $netPayout;
+
+            $moderator->balance -= $grossPayout * 0.1;
+
+            $transaction = new Transactions();
+            $transaction->sender_id = $moderator->id;
+            $transaction->receiver_id = $player->id;
+            $transaction->amount = $netPayout;
+            $transaction->transaction_type = 'Payout';
+            $transaction->description = 'Payout for Match id' . $match->id;
+            $transaction->ref = null;
+            $transaction->status = 'completed';
+
+            $player->save();
+            $moderator->save();
+            $transaction->save();
         }
     }
 

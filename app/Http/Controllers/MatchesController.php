@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
-use Mockery\Exception;
 use App\Models\Matches;
 use Illuminate\Http\Request;
 use App\Models\Participants;
-use App\Models\Transactions;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MatchControllerExtensions\MatchesControllerExtension;
 use App\Http\Controllers\MatchControllerExtensions\MatchJoinigControllerExtension;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\BattleRoyalDuos;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\BattleRoyalQuad;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\BattleRoyalSolos;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\PlayerVsPlayer1v1;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\PlayerVsPlayer2V2;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\PlayerVsPlayer5V5;
 
 class MatchesController extends Controller
 {
@@ -119,6 +123,9 @@ class MatchesController extends Controller
         ;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function edit(Request $request, $match)
     {
         // Validate the incoming request...
@@ -133,34 +140,45 @@ class MatchesController extends Controller
 
         $match = Matches::find($match);
 
+
         if ($request->input('status') == 'Completed') {
+            DB::beginTransaction();
+
+            $matchModeController = null;
+
+            //get match mode controller
+            switch ($match->mode) {
+                case '1v1':
+                    $matchModeController = new PlayerVsPlayer1v1($match);
+                    break;
+                case '2v2':
+                    $matchModeController = new PlayerVsPlayer2V2($match);
+                    break;
+                case '5v5':
+                    $matchModeController = new PlayerVsPlayer5V5($match);
+                    break;
+                case 'BRS':
+                    $matchModeController = new BattleRoyalSolos($match);
+                    break;
+                case 'BRD':
+                    $matchModeController = new BattleRoyalDuos($match);
+                    break;
+                case 'BRQ':
+                    $matchModeController = new BattleRoyalQuad($match);
+                    break;
+                default:
+                    abort(403, 'Invalid match mode');
+            }
+
             try {
-                $mod = User::where('username', 'Super Admin')->first();
-                $user_id = $this->getWinner($match);
-
-                $user = User::find($user_id);
-
-                $transfer = Transactions::create([
-                                                     'sender_id'        => $mod->id,
-                                                     'receiver_id'      => $user_id,
-                                                     'amount'           => $match->stake * 0.9,
-                                                     'transaction_type' => 'Payout',
-                                                     'description'      => 'Payout for Match id' . $match->id,
-                                                     'ref'              => null,
-                                                     'status'           => 'completed',
-                                                 ]);
-
-                $receiver_balance = $user->balance + $match->stake * 0.9;
-                $sender_balance = $mod->balance + $match->stake * 0.9;
-
-                $user->update(['balance' => $receiver_balance]);
-                $mod->update(['balance' => $sender_balance]);
-
-
-            } catch (Exception $e) {
-                Log::info($e->getMessage());
+                $matchModeController->payPlayers();
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                abort(500, 'An error occurred while paying players');
             }
         }
+
 
         $match->update($request->all());
 

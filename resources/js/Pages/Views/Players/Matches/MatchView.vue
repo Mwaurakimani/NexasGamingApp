@@ -29,7 +29,7 @@ function postResutlts() {
   })
 }
 
-function disputeResults(){
+function disputeResults() {
 }
 
 </script>
@@ -48,19 +48,15 @@ function disputeResults(){
         <ModeBRS v-if="match.mode === 'BRS'" :match="match"></ModeBRS>
       </div>
       <div v-else-if="match.status === 'Starting'" class="px-[10px] border p-[20px] rounded">
+        <p class="mb-[10px] font-bold text-center ">Copy the password and click the link to join the match</p>
         <ul>
-          <li class="flex flex-col justify-between mb-[20px]">
-            <p class="mb-[10px] font-bold ">Copy the Password and click start to join the match</p>
-            <li class="flex mb-[20px] justify-between font-bold">
-              <p>Password: </p>
-              <p>{{ match.password }}</p>
-            </li>
-            <iframe
-                class="aspect-[4/3]"
-                id="myIframe"
-                :src="match.link"
-                style="border:none;">
-            </iframe>
+          <li class=" mb-[20px]  font-bold">
+            <p>Password: </p>
+            <p>{{ match.password ?? "N/A" }}</p>
+          </li>
+          <li class=" mb-[20px]  font-bold">
+            <p>Link: </p>
+            <a :href="match.link" target="_blank" class="text-blue-600 underline w-[100px] break-words" >{{ match.link ?? "N/A" }}</a>
           </li>
         </ul>
       </div>
@@ -112,9 +108,85 @@ function disputeResults(){
               </div>
             </div>
             <div v-if="match.status === 'Tallied'" class="w-full flex justify-between py-[10px]">
-              <a :href="'https://wa.me/254719445697?text=Disputing%20results%20for%20match-id:'+match.id+'\n'" target="_blank" class="block bg-gray-300 text-center rounded w-full py-[10px]">Dispute Results</a>
+              <a :href="'https://wa.me/254719445697?text=Disputing%20results%20for%20match-id:'+match.id+'\n'"
+                 target="_blank" class="block bg-gray-300 text-center rounded w-full py-[10px]">Dispute Results</a>
             </div>
-            <p class="text-red-400">Ensure you have supporting proof to dispute the results. This includes screen recordings, screenshots or any other statistical analysis to support your claim</p>
+            <p class="text-red-400">Ensure you have supporting proof to dispute the results. This includes screen
+              recordings, screenshots or any other statistical analysis to support your claim</p>
+          </div>
+        </div>
+      </section>
+      <section v-else-if="match.status === 'Disputed'" class="border p-[10px] rounded">
+        <h2 class="text-[25px] font-bold mb-[20px]">Results</h2>
+        <div class="mb-[30px]">
+          <div class="flex items-center justify-between mb-[5px] flex-wrap">
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Entered Score</label>
+              <p>{{ currentUserParticipant.user_score }}</p>
+            </div>
+            <div class="flex justify-between w-full mb-[10px] border-b-gray-500 border-b pb-[10px]">
+              <label>Modified Score</label>
+              <p>{{ currentUserParticipant.moderator_score }}</p>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Estimated Payout</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p class="flex">{{ currentUserParticipant.user_score * match.stake }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Service Fee</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p>{{ currentUserParticipant.user_score * match.stake * 0.1 }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]  border-b-gray-500 border-b pb-[10px]">
+              <label>Full Payout</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p>{{ currentUserParticipant.user_score * match.stake * 0.9 }}</p>
+              </div>
+            </div>
+            <p class="text-red-400">Match results were disputed. Please Wait as we adjust the results.</p>
+          </div>
+        </div>
+      </section>
+      <section v-else-if="match.status === 'Completed'" class="border p-[10px] rounded">
+        <h2 class="text-[25px] font-bold mb-[20px]">Final Results</h2>
+        <div class="mb-[30px]">
+          <div class="flex items-center justify-between mb-[5px] flex-wrap">
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Entered Score</label>
+              <p>{{ currentUserParticipant.user_score }}</p>
+            </div>
+            <div class="flex justify-between w-full mb-[10px] border-b-gray-500 border-b pb-[10px]">
+              <label>Modified Score</label>
+              <p>{{ currentUserParticipant.moderator_score }}</p>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Estimated Payout</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p class="flex">{{ currentUserParticipant.user_score * match.stake }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]">
+              <label>Service Fee</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p>{{ currentUserParticipant.user_score * match.stake * 0.1 }}</p>
+              </div>
+            </div>
+            <div class="flex justify-between w-full mb-[10px]  border-b-gray-500 border-b pb-[10px]">
+              <label>Full Payout</label>
+              <div class="flex items-center gap-[5px]">
+                <img class="h-[20px] w-[20px]" src="/storage/system/Coin%20Dark.png" alt="coin">
+                <p>{{ currentUserParticipant.user_score * match.stake * 0.9 }}</p>
+              </div>
+            </div>
+            <p class="text-red-400">Please share any feedback to improve your experience while using the platform.</p>
           </div>
         </div>
       </section>

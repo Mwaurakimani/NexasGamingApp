@@ -3,12 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -77,5 +77,12 @@ class User extends Authenticatable
     public function getRoleNameAttribute()
     {
         return $this->role ? $this->role->name : null;
+    }
+
+    public function matches()
+    {
+        return $this->belongsToMany(Matches::class, 'participants', 'user_id', 'match_id')
+            ->withPivot( 'grouped', 'grouped_name', 'user_score', 'moderator_score', 'status', 'payout', 'results',)
+            ->withTimestamps();
     }
 }
