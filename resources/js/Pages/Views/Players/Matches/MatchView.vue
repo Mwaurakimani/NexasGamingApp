@@ -112,7 +112,7 @@ function disputeResults(){
               </div>
             </div>
             <div v-if="match.status === 'Tallied'" class="w-full flex justify-between py-[10px]">
-              <a :href="'https://wa.me/254719445697?text=Disputing_results_for match_id_'+match.id+'\n'"  @click.prevent.stop="disputeResults" class="block bg-gray-300 text-center rounded w-full py-[10px]">Dispute Results</a>
+              <a :href="'https://wa.me/254719445697?text=Disputing%20results%20for%20match-id:'+match.id+'\n'" target="_blank" class="block bg-gray-300 text-center rounded w-full py-[10px]">Dispute Results</a>
             </div>
             <p class="text-red-400">Ensure you have supporting proof to dispute the results. This includes screen recordings, screenshots or any other statistical analysis to support your claim</p>
           </div>
