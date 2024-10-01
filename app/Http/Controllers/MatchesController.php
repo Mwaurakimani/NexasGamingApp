@@ -142,6 +142,12 @@ class MatchesController extends Controller
 
 
         if ($request->input('status') == 'Completed') {
+
+            if ($match->status == 'Completed') {
+                abort(401, 'The match is already completed.');
+            }
+
+
             DB::beginTransaction();
 
             $matchModeController = null;
@@ -230,7 +236,7 @@ class MatchesController extends Controller
 
         if (!$user || !$match) abort(404, "User or Match not found");
 
-        if (in_array($user->id, $match->participants->pluck('id')->toArray()))
+        if (in_array($user->id, $match->participants->pluck('user_id')->toArray()))
             abort(403, "Entry already Exist");
 
         Participants::create([
