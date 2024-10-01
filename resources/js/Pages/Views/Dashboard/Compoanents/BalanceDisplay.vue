@@ -2,7 +2,12 @@
 import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps(['account'])
+const emits = defineEmits(['openModal'])
 const page = usePage()
+
+const openModal = (modalType) => {
+  emits('openModal', modalType)
+}
 </script>
 
 <template>

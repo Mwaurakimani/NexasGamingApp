@@ -25,21 +25,6 @@ function formatDate(dateString) {
     <div class="flex gap-[20px] mb-[20px]">
       <Link as="button" :href="route('matches.list')">Matches</Link>
     </div>
-    <div v-show="false" class="mb-[20px] bg-gray-100 p-[15px]">
-      <ul class="flex gap-3">
-        <li class="flex flex-col">
-          <label class="mb-[10px]">Match Type</label>
-          <select>
-            <option value="BRS">Battle Royal (Solo)</option>
-            <option value="BRD">Battle Royal (Duo)</option>
-            <option value="BRQ">Battle Royal (Quad)</option>
-            <option value="1v1">1 v 1</option>
-            <option value="2v2">2 v 2</option>
-            <option value="5v5">2 v 2</option>
-          </select>
-        </li>
-      </ul>
-    </div>
     <section v-if="matches.data.length > 0">
       <ul>
         <Link as="li" :href="route('matches.view_match',[match.id])" v-for="match in matches.data" class="match_display w-full mb-[20px] overflow-hidden shadow b-[10px] rounded">
@@ -62,6 +47,10 @@ function formatDate(dateString) {
               <div class="flex  mb-[3px] justify-between gap-[5px]">
                 <span class="font-bold">Teams/Players</span>
                 <span>{{match.teams}}</span>
+              </div>
+              <div class="flex  mb-[3px] justify-between gap-[5px]">
+                <span class="font-bold">Status</span>
+                <span>{{match.status}}</span>
               </div>
               <div class="flex  mb-[3px] justify-between gap-[5px]">
                 <span class="font-bold">Stake</span>

@@ -48,6 +48,7 @@ class MatchesController extends Controller
                 'Disputed',
                 'Completed'
             ])
+            ->orderBy('created_at', 'desc')
             ->simplePaginate(10)
         ;
 
@@ -238,13 +239,13 @@ class MatchesController extends Controller
                 $this->one_vs_one_join_match($request, $match->id);
                 break;
             case '2v2':
-                $this->two_vs_two_join_match($request, $match->id);
+                $this->two_vs_two_join_match($request, $match);
                 break;
             case '5v5':
                 $this->five_vs_five_join_match($request, $match->id);
                 break;
             case 'BRS':
-                $this->brs_join_match($request, $match->id);
+                $this->brs_join_match($request, $match);
                 break;
             case 'BRD':
                 $this->brd_join_match($request, $match->id);

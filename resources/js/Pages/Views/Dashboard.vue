@@ -17,7 +17,7 @@ const page = usePage()
 const component = shallowRef()
 
 function openModal(panel) {
-
+  console.log(panel)
   if (panel === 'deposit') {
     component.value = DepositBox
   } else {
@@ -40,7 +40,7 @@ const closeModal = () => $('#main_modal').fadeOut('fast')
     <Welcome/>
     <section class="flex">
       <div class="w-full md:flex-wrap md:flex ">
-        <BalanceDisplay :account="account"/>
+        <BalanceDisplay :account="account" @openModal="openModal"/>
         <CurrentMatchDisplay :currentMatch="currentMatch" :view="true"/>
         <LeaderBoard/>
       </div>

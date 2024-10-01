@@ -9,47 +9,45 @@ use App\Models\Participants;
 use App\Models\Transactions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\MatchControllerExtensions\MatchModesController\BattleRoyalSolos;
 use App\Http\Controllers\MatchControllerExtensions\MatchModesController\PlayerVsPlayer1v1;
 
 trait MatchJoinigControllerExtension
 {
-    public function one_vs_one_join_match($request, $matchId)
+    public function one_vs_one_join_match($request, Matches $match)
     {
         $userId = auth()->id();
-        $matchDetails = Matches::find($matchId);
 
-        if (!$matchDetails)
-            return response()->json(['message' => 'Match not found.'], 404);
-
-        $global_rule_passed = new GlobalMatchRules($matchDetails);
-        $mode_1v1_rules_pass = new PlayerVsPlayer1v1($matchDetails);
+        $global_rule_passed = new GlobalMatchRules($match);
+        $mode_1v1_rules_pass = new PlayerVsPlayer1v1($match);
 
         DB::beginTransaction();
 
         try {
             $mod = User::where('username', 'Super Admin')->first();
             // Create a new match participant entry
-            $participant = Participants::create([
-                                                    'match_id'        => $matchId,
-                                                    'user_id'         => $userId,             // Use the authenticated user's ID
-                                                ]);
-            $transfer = Transactions::create([
-                                                 'sender_id'        => auth()->id(),
-                                                 'receiver_id'      => $mod->id,
-                                                 'amount'           => $matchDetails->stake,
-                                                 'transaction_type' => 'Stake',
-                                                 'description'      => 'Stake for Match id'.$matchDetails->id,
-                                                 'ref'              => null,
-                                                 'status'           => 'completed',
-                                             ]);
+            Participants::create([
+                                     'match_id' => $match->id,
+                                     'user_id'  => $userId,
+                                 ]);
 
-            $sender_balance = auth()->user()->balance - $matchDetails->stake;
-            $receiver_balance = $mod->balance + $matchDetails->stake;
+            Transactions::create([
+                                     'sender_id'        => auth()->id(),
+                                     'receiver_id'      => $mod->id,
+                                     'amount'           => $match->stake,
+                                     'transaction_type' => 'Stake',
+                                     'description'      => 'Stake for Match id' . $match->id,
+                                     'ref'              => null,
+                                     'status'           => 'completed',
+                                 ]);
+
+            $sender_balance = auth()->user()->balance - $match->stake;
+            $receiver_balance = $mod->balance + $match->stake;
 
             auth()->user()->update(['balance' => $sender_balance]);
             $mod->update(['balance' => $receiver_balance]);
 
-            $mode_1v1_rules_pass->validate_match($matchDetails);
+            $mode_1v1_rules_pass->validate_match($match);
 
             DB::commit();
         } catch (Exception $e) {
@@ -70,9 +68,48 @@ trait MatchJoinigControllerExtension
         // Implement match joining logic
     }
 
-    public function brs_join_match($request, $match)
+    public function brs_join_match($request, Matches $match)
     {
-        // Implement match joining logic
+        $userId = auth()->id();
+
+        $global_rule_passed = new GlobalMatchRules($match);
+        $mode_BRS_rules_pass = new BattleRoyalSolos($match);
+
+        DB::beginTransaction();
+
+        try {
+            $mod = User::where('username', 'Super Admin')->first();
+            // Create a new match participant entry
+            Participants::create([
+                                     'match_id' => $match->id,
+                                     'user_id'  => $userId,
+                                 ]);
+
+            Transactions::create([
+                                     'sender_id'        => auth()->id(),
+                                     'receiver_id'      => $mod->id,
+                                     'amount'           => $match->stake,
+                                     'transaction_type' => 'Stake',
+                                     'description'      => 'Stake for Match id' . $match->id,
+                                     'ref'              => null,
+                                     'status'           => 'completed',
+                                 ]);
+
+            $sender_balance = auth()->user()->balance - $match->stake;
+            $receiver_balance = $mod->balance + $match->stake;
+
+            auth()->user()->update(['balance' => $sender_balance]);
+            $mod->update(['balance' => $receiver_balance]);
+
+            $mode_BRS_rules_pass->validate_match($match);
+
+            DB::commit();
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+            DB::rollBack();
+        }
+
+        return response()->json(['message' => 'Successfully joined the match.'], 200);
     }
 
     public function brd_join_match($request, $match)

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\MatchControllerExtensions;
 
+use App\Models\Matches;
 use App\Models\Participants;
 use Illuminate\Support\Facades\Auth;
 
 Class GlobalMatchRules
 {
-    public function __construct($match)
+    public function __construct(Matches $match)
     {
         //match should be active for joining
         if ($match->status === 'Inactive' || $match->status === 'pending')

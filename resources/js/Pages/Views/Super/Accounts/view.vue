@@ -109,25 +109,25 @@ const unsuspend_account = () => {
                                 <input class="w-full rounded-lg border-gray-300" type="text"
                                        v-model="userForm.username">
                             </div>
-                            <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
+                            <InputError class="my-2 text-right" :message="userForm.errors.username"/>
 
                             <div class="flex mb-[10px]">
                                 <label class="w-[200px] text-[16px]">COD Username</label>
                                 <input class="w-full rounded-lg border-gray-300" type="text"
                                        v-model="userForm.codm_username">
                             </div>
-                            <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
+                            <InputError class="my-2 text-right" :message="userForm.errors.codm_username"/>
                             <div class="flex mb-[10px]">
                                 <label class="w-[200px] text-[16px]">Email</label>
                                 <input class="w-full rounded-lg border-gray-300" type="email" v-model="userForm.email">
                             </div>
-                            <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
+                            <InputError class="my-2 text-right" :message="userForm.errors.email"/>
                             <div class="flex mb-[10px]">
                                 <label class="w-[200px] text-[16px]">Phone Number</label>
                                 <input class="w-full rounded-lg border-gray-300" type="text"
                                        v-model="userForm.phone_number">
                             </div>
-                            <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
+                            <InputError class="my-2 text-right" :message="userForm.errors.phone_number"/>
                             <div class="flex mb-[10px]">
                                 <label class="w-[200px] text-[16px]">Role</label>
                                 <select class="w-full rounded-lg border-gray-300" v-model="userForm.role_name">
@@ -138,7 +138,7 @@ const unsuspend_account = () => {
                                     <option value="Super Admin">Super Admin</option>
                                 </select>
                             </div>
-                            <InputError class="my-2 text-right" :message="userForm.errors.current_password"/>
+                            <InputError class="my-2 text-right" :message="userForm.errors.role_name"/>
                             <div class="flex justify-end py-[5px]" :class="[is_owner?'':'hidden']">
                                 <button @click.prevent="updateAccount">Save</button>
                             </div>

@@ -36,6 +36,8 @@ const emits = defineEmits([
                 <tr>
                     <th class="p-[5px]">ID</th>
                     <th class="py-[5px]">Username</th>
+                    <th class="py-[5px]">Grouped</th>
+                    <th class="py-[5px]">Grouped Name</th>
                     <th class="py-[5px]">CODM Username</th>
                     <th class="py-[5px]">U Score</th>
                     <th class="py-[5px]">Ad Score</th>
@@ -46,6 +48,8 @@ const emits = defineEmits([
                 <Link class="hover:!bg-black hover:!text-white cursor-pointer" as="tr"
                       :href="route('accounts.view_user',[user.id])" v-for="user in participants">
                     <td class="p-[5px] px-[10px]">{{ user.id }}</td>
+                    <td class="py-[5px]">{{ user.username }}</td>
+                    <td class="py-[5px]">{{ user.username }}</td>
                     <td class="py-[5px]">{{ user.username }}</td>
                     <td class="py-[5px]">{{ user.codm_username }}</td>
                     <td class="py-[5px]">{{ user.user_score }}</td>

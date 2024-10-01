@@ -68,11 +68,12 @@ async function joinMatch() {
           <p v-else-if="match.mode === '1v1'" class="text-center ">PVP (1V1)</p>
           <p v-else-if="match.mode === '2v2'" class="text-center ">PVP (2V2)</p>
           <p v-else-if="match.mode === '5v5'" class="text-center ">PVP (5V5)</p>
+          <hr class="w-[80%] mx-auto ">
         </li>
         <li class="grid place-content-center">
           <Link v-if="view"
                 as="button"
-                :href="route('matches.view_match',[1])"
+                :href="route('matches.view_match',[match.id])"
                 class="bg-gray-300 px-[30px] py-[5px] rounded"
                 v-html="'View Match'"
           />
