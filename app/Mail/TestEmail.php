@@ -38,7 +38,7 @@ class TestEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.test',
         );
     }
 
@@ -54,6 +54,6 @@ class TestEmail extends Mailable
 
     public function build(): TestEmail
     {
-        return $this->text('This is a test email sent using Laravel.');
+        return $this->view('emails.test');
     }
 }
