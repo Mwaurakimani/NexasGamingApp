@@ -12,7 +12,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['guest'])->group(function () {
-    include_once "guest/index.php";
+    include_once "Guest/index.php";
 });
 
 
