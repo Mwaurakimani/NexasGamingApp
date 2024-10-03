@@ -1,16 +1,16 @@
 <?php
 
 use Inertia\Inertia;
-use App\Mail\TestEmail;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
 
-    $to = 'recipient@example.com'; // Recipient's email address
-    $resp = Mail::to($to)->send(new TestEmail());
-    dd($resp);
+//    $to = 'recipient@example.com'; // Recipient's email address
+//    $resp = Mail::to('kimmwaus@gmail.com')->send(new TestEmail());
+//    dd($resp);
+
+//    dd("hi");
 
     return Inertia::render('Welcome');
 });

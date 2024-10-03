@@ -54,6 +54,6 @@ class TestEmail extends Mailable
 
     public function build(): TestEmail
     {
-        return $this->view('emails.test'); // Create a Blade view for the email content
+        return $this->text('This is a test email sent using Laravel.');
     }
 }
