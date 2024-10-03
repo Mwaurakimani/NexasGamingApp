@@ -13,12 +13,7 @@ Route::get('/', function () {
         'Reply-To: kimmwaus@gmail.com' . "\r\n" . // Reply-to address
         'X-Mailer: PHP/' . phpversion(); // Optional header
 
-// Send the email
-    if (mail($to, $subject, $message, $headers)) {
-        echo 'Email sent successfully.';
-    } else {
-        echo 'Email sending failed.';
-    }
+    dd(mail($to, $subject, $message, $headers));
 
     return Inertia::render('Welcome');
 });
