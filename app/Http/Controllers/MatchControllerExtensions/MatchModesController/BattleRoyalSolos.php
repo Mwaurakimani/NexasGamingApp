@@ -29,6 +29,10 @@ class BattleRoyalSolos extends MatchMode
 
         foreach ($players as $player) {
             $matchData = $player->matches()->where('match_id', $match->id)->first();
+            //TODO: match the user and moderator score
+
+
+
             $score = $matchData->pivot->user_score != $matchData->pivot->moderator_score
                 ? $matchData->pivot->results ==  null ? $matchData->pivot->user_score : $matchData->pivot->moderator_score
                 : $matchData->pivot->moderator_score;
@@ -40,7 +44,7 @@ class BattleRoyalSolos extends MatchMode
 
             $player->balance += $netPayout;
 
-            $moderator->balance -= $grossPayout * 0.1;
+            $moderator->balance -= $netPayout;
 
             $transaction = new Transactions();
             $transaction->sender_id = $moderator->id;

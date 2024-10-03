@@ -143,9 +143,9 @@ class MatchesController extends Controller
 
         if ($request->input('status') == 'Completed') {
 
-            if ($match->status == 'Completed') {
-                abort(401, 'The match is already completed.');
-            }
+//            if ($match->status == 'Completed') {
+//                abort(401, 'The match is already completed.');
+//            }
 
 
             DB::beginTransaction();
