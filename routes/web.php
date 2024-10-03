@@ -4,16 +4,17 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
+//$resp = Mail::to('aerissat@gmail.com')->send(new TestEmail());
+
+
 Route::get('/', function () {
-
-//    $to = 'recipient@example.com'; // Recipient's email address
-//    $resp = Mail::to('kimmwaus@gmail.com')->send(new TestEmail());
-//    dd($resp);
-
-//    dd("hi");
-
     return Inertia::render('Welcome');
 });
+
+Route::middleware(['guest'])->group(function () {
+    include_once "guest/index.php";
+});
+
 
 Route::get('/userIsAuthenticated', function () {
     return ["status" => auth()->check()];
