@@ -1,19 +1,16 @@
 <?php
 
 use Inertia\Inertia;
+use App\Mail\TestEmail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
 
-    $to = 'kimmwaus@gmail.com';                        // Recipient's email address
-    $subject = 'Test Email';                           // Email subject
-    $message = 'This is a test email sent using PHP.'; // Email body
-    $headers = 'From: sender@example.com' . "\r\n" . // Sender's email address
-        'Reply-To: kimmwaus@gmail.com' . "\r\n" . // Reply-to address
-        'X-Mailer: PHP/' . phpversion(); // Optional header
-
-    dd(mail($to, $subject, $message, $headers));
+    $to = 'recipient@example.com'; // Recipient's email address
+    $resp = Mail::to($to)->send(new TestEmail());
+    dd($resp);
 
     return Inertia::render('Welcome');
 });
