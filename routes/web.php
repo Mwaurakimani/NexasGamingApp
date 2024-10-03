@@ -16,6 +16,8 @@ if(mail($to, $subject, $message, $headers)) {
 }
 ?>
 
+
+
 die();
 Route::get('/', function () {
     return Inertia::render('Welcome');
