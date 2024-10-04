@@ -16,7 +16,12 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('password.email'));
+    form.post(route('password.email'),{
+      onSuccess: () => {
+        alert('Password reset link sent successfully');
+        form.reset();
+      }
+    });
 };
 </script>
 
