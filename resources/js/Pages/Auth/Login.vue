@@ -49,6 +49,10 @@ const submit = () => {
             <Link class="text-blue-700 underline" href="/register">Register</Link>
           </p>
         </section>
+        <div class="w-[200px] h-[100px] mx-auto mt-[50px] flex justify-center items-center flex-col">
+          <img alt="image" class="w-[200px] h-[50px] mb-[5px] object-contain mx-auto" src="/storage/system/WhatsApp_icon.png.webp">
+          <a href="https://chat.whatsapp.com/DCZtOj3G4AYJtgCwc0h9wQ" class="bg-green-500 text-black px-[20px] py-[10px] rounded ">Join Group</a>
+        </div>
       </form>
     </div>
   </div>
