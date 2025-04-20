@@ -26,7 +26,5 @@
                 integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
                 crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-{{--        <script src="https://cdn.pulse.is/livechat/loader.js" data-live-chat-id="66fe6fd142e665877c03d825"--}}
-{{--                async></script>--}}
     </body>
 </html>

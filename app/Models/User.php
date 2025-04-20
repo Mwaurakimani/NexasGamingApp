@@ -6,6 +6,7 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
+use App\Platform\Classes\Users\UserStatus;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,11 +28,9 @@ class User extends Authenticatable
         'username',
         'email',
         'phone_number',
-        'codm_username',
         'balance',
         'email_verified_at',
         'password',
-        'role_id',
     ];
 
     /**
@@ -53,7 +52,6 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
-        'role_name'
     ];
 
     /**
@@ -61,22 +59,23 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'Active' => UserStatus::class,
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
-    public function role()
-    {
-        return $this->belongsTo(role::class, 'role_id', 'id', 'roles');
-    }
 
-    public function getRoleNameAttribute()
+
+
+    public function getStatusLabelAttribute(): string
     {
-        return $this->role ? $this->role->name : null;
+        return match ($this->Active) {
+            0 => 'Inactive',
+            1 => 'Active',
+            2 => 'Suspended',
+            default => 'Unknown',
+        };
     }
 
     public function matches()

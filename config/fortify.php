@@ -1,8 +1,8 @@
 <?php
 
-use Laravel\Fortify\Features;
+    use Laravel\Fortify\Features;
 
-return [
+    return [
 
     /*
     |--------------------------------------------------------------------------
