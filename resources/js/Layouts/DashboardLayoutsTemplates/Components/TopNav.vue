@@ -87,12 +87,12 @@ const userInitials = computed(() => {
                         <li class="hover:bg-gray-100 px-4 py-2 cursor-pointer" @click="toggleFullscreen">
                             🔲 Fullscreen
                         </li>
-                        <li class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
-                            <Link href="/">🏠 Home</Link>
-                        </li>
-                        <li class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
-                            <Link href="/profile">👤 Profile</Link>
-                        </li>
+                        <Link as="li" href="/" class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                            <span>🏠 Home</span>
+                        </Link>
+                        <Link as="li" href="/profile" class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                            <span >👤 Profile</span>
+                        </Link>
                         <li class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                             <div @click.stop="logout">
                                 <button type="button" class="w-full text-left">🚪 Logout</button>

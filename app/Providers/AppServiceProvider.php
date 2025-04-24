@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+
     }
 
     /**
@@ -25,8 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom([
             database_path('migrations/System'),
             database_path('migrations/users'),
-            database_path('migrations/Matches'),
-            database_path('migrations/Transaction'),
+            database_path('migrations/Platform'),
         ]);
     }
 }

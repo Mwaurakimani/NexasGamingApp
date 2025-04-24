@@ -15,7 +15,7 @@ const form = useForm({
     email: props.user.email,
     phone_number: props.user.phone_number,
     role: props.user.role,
-    Active: props.user.Active,
+    status: props.user.is_active,
 })
 
 const updateUser = () => {
@@ -60,21 +60,18 @@ const updateUser = () => {
                         <option value="Super Admin">Super Admin</option>
                     </select>
                     <InputError :message="form.errors.role" />
+
                 </div>
 
                 <div>
                     <label class="block font-medium">Status</label>
-                    <select v-model="form.Active" class="border px-3 py-2 rounded w-full">
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                        <option value="2">Suspended</option>
+                    <select v-model="form.status" class="border px-3 py-2 rounded w-full">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Suspended">Suspended</option>
                     </select>
-                    <InputError :message="form.errors.active" />
+                    <InputError :message="form.errors.status" />
                 </div>
-
-
-
-
                 <div>
                     <button type="submit" class="bg-black text-white px-4 py-2 rounded hover:opacity-90">
                         Update User

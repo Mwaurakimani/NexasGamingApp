@@ -5,10 +5,10 @@
 <template>
     <div class="mobile-nav md:hidden">
         <ul class="flex justify-around items-center h-full">
-            <li class="flex flex-col items-center text-sm cursor-pointer">
+            <Link :as="'li'" :href="'/dashboard'" class="flex flex-col items-center text-sm cursor-pointer">
                 <div>🏠</div>
                 <span class="text-[10px]">Dashboard</span>
-            </li>
+            </Link>
             <li class="flex flex-col items-center text-sm cursor-pointer">
                 <div>🎮</div>
                 <span class="text-[10px]">Games</span>

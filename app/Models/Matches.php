@@ -2,44 +2,40 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Matches extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['moderator_id', 'mode', 'date', 'teams', 'status', 'time', 'stake', 'link', 'password', 'pace', 'notes',];
 
-    protected $appends = [
-        'moderator_data',
-    ];
-
-    public function moderator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function game(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'moderator_id', 'id');
+        return $this->belongsTo(Game::class);
     }
 
-    public function participants(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function matchType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasMany(Participants::class, 'match_id', "id");
+        return $this->belongsTo(MatchType::class);
     }
 
-    public function players()
+    public function participants(): HasMany
     {
-        // 'participants' is the pivot table, 'match_id' and 'user_id' are foreign keys
-        return $this->belongsToMany(User::class, 'participants', 'match_id', 'user_id')
-            ->withPivot( 'grouped', 'grouped_name', 'user_score', 'moderator_score', 'status', 'payout', 'results',)
-            ->withTimestamps()
-        ;
+        return $this->hasMany(MatchParticipant::class);
     }
 
-    public function getModeratorDataAttribute()
+    public function logs(): HasMany
     {
-        return $this->moderator ? $this->moderator->username : null;
+        return $this->hasMany(MatchLog::class);
     }
 
-
+    public function winner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'winner_id');
+    }
 }

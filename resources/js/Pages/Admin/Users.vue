@@ -6,7 +6,7 @@ import {provide, ref, watch} from 'vue'
 const props = defineProps({
     users: Object,
     filters: Object,
-    stats: Object, // <-- Add `stats` to props passed from controller
+    stats: Object,
 })
 
 provide('pageTitle', 'User Management')
@@ -49,8 +49,8 @@ const impersonate = (userId) => {
                     <div class="text-xl font-bold text-red-600">{{ stats.inactive }}</div>
                 </div>
                 <div class="bg-white rounded shadow p-4 text-center">
-                    <div class="text-sm text-gray-500">Admins</div>
-                    <div class="text-xl font-bold text-blue-600">{{ stats.admins }}</div>
+                    <div class="text-sm text-gray-500">Suspended Users</div>
+                    <div class="text-xl font-bold text-orange-600">{{ stats.suspended }}</div>
                 </div>
             </div>
 
@@ -102,8 +102,8 @@ const impersonate = (userId) => {
                         <td class="px-4 py-2">{{ user.phone_number }}</td>
                         <td class="px-4 py-2">{{ user.role }}</td>
                         <td class="px-4 py-2">
-                                <span :class="user.Active ? 'text-green-600' : 'text-red-600'" class="font-semibold">
-                                    {{ user.Active ? 'Yes' : 'No' }}
+                                <span :class="user.is_active === 'Active' ? 'text-green-600' : 'text-red-600'" class="font-semibold">
+                                    {{ user.is_active  }}
                                 </span>
                         </td>
                         <td class="px-4 py-2">

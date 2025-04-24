@@ -69,9 +69,6 @@
                                                 'role' => 'required|string|in:Guest,Player,Moderator,Manager,Admin,Super Admin',
                                                 'Active' => 'required|in:0,1,2'
                                             ]);
-
-            $validated;
-
             $user->update($validated);
 
             return redirect()

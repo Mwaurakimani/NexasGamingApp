@@ -41,7 +41,7 @@ provide('pageTitle', 'User Management')
                         <p><strong>Email:</strong> {{ user.email }}</p>
                         <p><strong>Phone:</strong> {{ user.phone_number }}</p>
                         <p><strong>Role:</strong> {{ user.role }}</p>
-                        <p><strong>Status:</strong> {{ user.Active ? 'Active' : 'Inactive' }}</p>
+                        <p><strong>Status:</strong> {{ user.is_active }}</p>
                     </div>
 
                     <!-- Tabs: transactions, matches -->

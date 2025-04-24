@@ -26,9 +26,10 @@ const hasRole = (check) => {
         <section>
             <!-- Player / Guest Links -->
             <ul class="space-y-2">
-                <li :class="[ 'p-1 rounded cursor-pointer', isActive('/dashboard') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
+                <Link :href="'/dashboard'" :as="'li'"
+                      :class="[ 'p-1 rounded cursor-pointer', isActive('/dashboard') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
                     🏠 Dashboard
-                </li>
+                </Link>
                 <li :class="[ 'p-1 rounded cursor-pointer', isActive('/games') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
                     🎮 Games
                 </li>
@@ -42,7 +43,7 @@ const hasRole = (check) => {
 
             <!-- Moderator Section -->
             <template v-if="hasRole('Moderator')">
-                <hr class="my-4 border-white/20" />
+                <hr class="my-4 border-white/20"/>
                 <h6 class="text-xs uppercase text-white/60 font-bold mb-2 px-1">Moderator Panel</h6>
                 <ul class="space-y-2">
                     <li :class="[ 'p-1 rounded cursor-pointer', isActive('/moderation') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
@@ -53,7 +54,7 @@ const hasRole = (check) => {
 
             <!-- Manager Section -->
             <template v-if="hasRole('Manager')">
-                <hr class="my-4 border-white/20" />
+                <hr class="my-4 border-white/20"/>
                 <h6 class="text-xs uppercase text-white/60 font-bold mb-2 px-1">Manager Tools</h6>
                 <ul class="space-y-2">
                     <li :class="[ 'p-1 rounded cursor-pointer', isActive('/tournaments') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
@@ -64,10 +65,11 @@ const hasRole = (check) => {
 
             <!-- Admin Section -->
             <template v-if="hasRole('Admin')">
-                <hr class="my-4 border-white/20" />
+                <hr class="my-4 border-white/20"/>
                 <h6 class="text-xs uppercase text-white/60 font-bold mb-2 px-1">Admin Tools</h6>
                 <ul class="space-y-2">
-                    <Link as="li" :href="route('admin.users')" :class="[ 'p-1 rounded cursor-pointer', isActive('/users') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
+                    <Link as="li" :href="route('admin.users')"
+                          :class="[ 'p-1 rounded cursor-pointer', isActive('/users') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">
                         👥 Manage Users
                     </Link>
                 </ul>
@@ -75,7 +77,7 @@ const hasRole = (check) => {
 
             <!-- Super Admin Section -->
             <template v-if="hasRole('Super Admin')">
-                <hr class="my-4 border-white/20" />
+                <hr class="my-4 border-white/20"/>
                 <h6 class="text-xs uppercase text-white/60 font-bold mb-2 px-1">Super Admin</h6>
                 <ul class="space-y-2">
                     <li :class="[ 'p-1 rounded cursor-pointer', isActive('/system') ? 'bg-white/20 font-bold' : 'hover:bg-white/10' ]">

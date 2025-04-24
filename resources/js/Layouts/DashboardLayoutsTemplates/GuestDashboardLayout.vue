@@ -17,7 +17,6 @@ const pageTitle = computed(() => providedTitle?.value ?? 'Welcome')
             <TopNav/>
         </template>
         <template #mobilenav>
-            <MobileNav/>
         </template>
         <slot/>
     </DashboardShell>

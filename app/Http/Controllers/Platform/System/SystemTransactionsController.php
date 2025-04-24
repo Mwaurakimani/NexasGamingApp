@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Transactions;
+namespace App\Http\Controllers\Platform\System;
 
 use App\Models\User;
 use Inertia\Inertia;
