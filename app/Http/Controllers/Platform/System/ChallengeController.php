@@ -48,5 +48,13 @@
             return Inertia::render('Challenges/Create');
         }
 
-        // Future methods like store(), show(), accept(), etc. can be added here
+        public function viewChess(Request $request, $id): \Inertia\Response
+        {
+            $match = Matches::with(['participants.user', 'game', 'matchType'])->find($id);
+
+            return Inertia::render('games/chess/ViewChallenge',[
+                'match' => $match,
+            ]);
+        }
     }
+

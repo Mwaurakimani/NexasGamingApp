@@ -22,7 +22,7 @@ const isGuest = computed(() => role === 'Guest')
 
 .dashboard {
     display: grid;
-    @apply bg-black text-white min-h-screen w-full transition-all;
+    @apply bg-black text-white min-h-screen w-screen transition-all;
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr;

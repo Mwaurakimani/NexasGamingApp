@@ -41,7 +41,7 @@ const announcements = [
         </section>
 
         <!-- 🧾 Recent Matches -->
-        <section>
+        <section class="w-100">
             <h2 class="text-xl font-semibold mb-4">Recent Matches</h2>
             <div class="overflow-x-auto shadow">
                 <table class="w-full table-auto text-left bg-white rounded shadow">

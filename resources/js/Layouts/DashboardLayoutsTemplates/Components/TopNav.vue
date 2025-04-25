@@ -48,7 +48,7 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-    <nav class="top-nav sticky-top px-4 flex items-center justify-end h-[60px] bg-black border-b border-white/10">
+    <nav class="top-nav sticky-top px-4 flex items-center justify-end h-[60px] w-full bg-black border-b border-white/10">
         <div class="flex items-center gap-2 text-white text-sm flex-1">
             <button
                 v-if="showBackButton"

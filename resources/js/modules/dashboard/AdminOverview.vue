@@ -56,7 +56,6 @@ const notices = [
                 <tr>
                     <th class="px-4 py-2">Name</th>
                     <th class="px-4 py-2">Role</th>
-                    <th class="px-4 py-2">Status</th>
                     <th class="px-4 py-2 text-right">Actions</th>
                 </tr>
                 </thead>
@@ -64,7 +63,6 @@ const notices = [
                 <tr v-for="user in users" :key="user.id" class="border-t">
                     <td class="px-4 py-2">{{ user.name }}</td>
                     <td class="px-4 py-2">{{ user.role }}</td>
-                    <td class="px-4 py-2">{{ user.status }}</td>
                     <td class="px-4 py-2 text-right">
                         <a href="#" class="text-blue-600 hover:underline">Edit</a>
                     </td>

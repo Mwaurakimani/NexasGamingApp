@@ -23,7 +23,7 @@ const component = defineAsyncComponent(() => {
 
 <template>
     <DashboardLayout>
-        <section class="p-6 space-y-6">
+        <section class="p-2.5 space-y-6">
             <component :is="component" v-bind="page.props" />
         </section>
     </DashboardLayout>
