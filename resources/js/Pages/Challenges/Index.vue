@@ -6,7 +6,7 @@ import ChallengeSortButton from '@/Components/Challenges/ChallengeSortButton.vue
 import NewChallengeModal from '@/Components/Challenges/NewChallengeModal.vue'
 
 import {ref} from 'vue'
-
+const props = defineProps(['challenges','errors'])
 const showFilter = ref(false)
 const showNewChallenge = ref(false)
 </script>
@@ -24,10 +24,13 @@ const showNewChallenge = ref(false)
                 </div>
             </div>
 
-            <ChallengeList/>
+            <ChallengeList v-if="challenges.length > 0" :challenges/>
+            <div v-else>
+                <p class="bg-gray-900 text-center py-6">No Challenges Available</p>
+            </div>
 
             <ChallengeFilterModal v-if="showFilter" @close="showFilter = false"/>
-            <NewChallengeModal v-if="showNewChallenge" @close="showNewChallenge = false"/>
+            <NewChallengeModal v-if="showNewChallenge" @close="showNewChallenge = false" :errors/>
         </div>
     </DefaultLayout>
 </template>

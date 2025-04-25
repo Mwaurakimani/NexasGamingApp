@@ -3,41 +3,40 @@
     namespace App\Http\Controllers\Platform\System;
 
     use Inertia\Inertia;
+    use App\Models\Matches;
     use Illuminate\Http\Request;
+    use Illuminate\Support\Carbon;
     use App\Http\Controllers\Controller;
 
-    class ChallengeController extends Controller
-    {
+    class ChallengeController extends Controller {
         /**
          * Display a listing of challenges.
          */
         public function index(Request $request)
         {
-            // For now, just return dummy data to populate the UI
-            $dummyChallenges = collect([
-                                           [
-                                               'id' => 1,
-                                               'game' => 'Chess',
-                                               'amount' => 100,
-                                               'player' => 'Kimani M.',
-                                               'avatar' => null,
-                                               'rank' => 'Gold',
-                                               'created_at' => now()->subMinutes(10)->toDateTimeString(),
-                                           ],
-                                           [
-                                               'id' => 2,
-                                               'game' => 'Chess',
-                                               'amount' => 250,
-                                               'player' => 'Wanjiru N.',
-                                               'avatar' => null,
-                                               'rank' => 'Silver',
-                                               'created_at' => now()->subMinutes(45)->toDateTimeString(),
-                                           ],
-                                       ]);
+
+            $openMatches = Matches::with(['participants.user', 'game', 'matchType'])
+                                  ->get()
+                                  ->filter(function ($match) {
+                                      return $match->participants->count() < $match->matchType->min_players;
+                                  })
+                                  ->map(function ($match) {
+                                      $firstPlayer = $match->participants->first()?->user;
+
+                                      return [
+                                          'id'         => $match->id,
+                                          'game'       => $match->game->name,
+                                          'amount'     => $match->stake,
+                                          'player'     => $firstPlayer ? "{$firstPlayer->username}" : 'Unknown',
+                                          'avatar'     => $firstPlayer->avatar ?? null,
+                                          'rank'       => $firstPlayer->rank ?? 'Unranked',  // Assuming user has a rank field
+                                          'created_at' => Carbon::parse($match->created_at)->toDateTimeString(),
+                                      ];
+                                  });
 
             return Inertia::render('Challenges/Index', [
-                'challenges' => $dummyChallenges,
-                'filters' => $request->only(['amount', 'game', 'rank']),
+                'challenges' => $openMatches,
+                'filters'    => $request->only(['amount', 'game', 'rank']),
             ]);
         }
 

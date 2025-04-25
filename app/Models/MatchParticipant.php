@@ -11,9 +11,11 @@ class MatchParticipant extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $guarded = [];
+
     public function match()
     {
-        return $this->belongsTo(Matches::class);
+        return $this->belongsTo(Matches::class, 'match_id','id');
     }
 
     public function user()

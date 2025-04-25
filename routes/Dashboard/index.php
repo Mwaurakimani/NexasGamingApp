@@ -46,18 +46,14 @@
     });
 
 
+    Route::resource('games', GameController::class)->only(['index', 'show']);
+    Route::resource('match-types', MatchTypeController::class)->only(['index', 'show']);
+    Route::resource('matches', MatchesController::class);
+    Route::resource('match-participants', MatchParticipantController::class)->only(['store', 'update']);
+    Route::resource('match-logs', MatchLogController::class)->only(['store']);
+    Route::resource('wallets', WalletController::class)->only(['index', 'show']);
+    Route::resource('transactions', TransactionController::class)->only(['index', 'store']);
 
-    Route::middleware(['auth'])->group(function () {
-
-        Route::resource('games', GameController::class)->only(['index', 'show']);
-        Route::resource('match-types', MatchTypeController::class)->only(['index', 'show']);
-        Route::resource('matches', MatchesController::class);
-        Route::resource('match-participants', MatchParticipantController::class)->only(['store', 'update']);
-        Route::resource('match-logs', MatchLogController::class)->only(['store']);
-        Route::resource('wallets', WalletController::class)->only(['index', 'show']);
-        Route::resource('transactions', TransactionController::class)->only(['index', 'store']);
-
-    });
 
 
 

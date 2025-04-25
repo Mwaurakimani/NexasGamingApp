@@ -20,6 +20,6 @@ Class GlobalMatchRules
 
         if (Auth::user()->balance < $match->stake)
             abort(401, 'Insufficient balance. Please make a deposit and try again.');
-        
+
     }
 }

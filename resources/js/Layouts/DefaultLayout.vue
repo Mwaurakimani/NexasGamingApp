@@ -7,7 +7,7 @@
             <!-- Desktop Navigation -->
             <nav class="hidden md:flex gap-6 text-sm text-white/80">
                 <Link :href="route('home')" class="hover:text-white">Home</Link>
-                <Link :href="route('challenges')" class="hover:text-white">Challenges</Link>
+                <Link :href="route('challenges.index')" class="hover:text-white">Challenges</Link>
                 <Link :href="route('account.profile')" class="hover:text-white">Profile</Link>
             </nav>
         </header>
@@ -27,7 +27,7 @@
                     </a>
                 </li>
                 <li class="p-3 hover:text-white">
-                    <a :href="route('challenges')">
+                    <a :href="route('challenges.index')">
                         <span class="block text-center">⚔️</span>
                         <span class="block text-xs">Challenges</span>
                     </a>

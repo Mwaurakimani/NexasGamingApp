@@ -12,10 +12,6 @@
         include_once __DIR__ . '/Dashboard/index.php';
     });
 
-    Route::middleware(['auth'])->get('/Challenges', function () {
-        return Inertia::render('Challenges/Index');
-    })->name('challenges');
-
     // Authenticated user routes
     Route::middleware(['auth', 'verified'])->group(function () {
 

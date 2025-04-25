@@ -2,7 +2,6 @@
 
     namespace App\Http\Controllers\Platform\Match;
 
-
     use App\Models\Matches;
     use App\Models\Wallet;
     use App\Models\Transaction;
@@ -35,8 +34,8 @@
         public function store(Request $request)
         {
             $data = $request->validate([
-                                           'game_id'       => 'required|exists:games,id',
-                                           'match_type_id' => 'required|exists:match_types,id',
+                                           'game_key'       => 'required|exists:games,id',
+                                           'match_type_key' => 'required|exists:match_types,id',
                                            'stake'         => 'required|numeric|min:1',
                                            'timer'         => 'required|integer|min:1',
                                            'config'        => 'nullable|array',
@@ -51,13 +50,13 @@
 
             $match = Matches::create([
                                          'id'            => Str::uuid(),
-                                         'game_id'       => $data['game_id'],
-                                         'match_type_id' => $data['match_type_id'],
+                                         'game_id'       => $data['game_key'],
+                                         'match_type_id' => $data['match_type_key'],
                                          'stake'         => $data['stake'],
-                                         'payout'        => $data['stake'] * 1.8,
-                                         'service_fee'   => $data['stake'] * 0.2,
+                                         'payout'        => $data['stake'] * 1.9,
+                                         'service_fee'   => $data['stake'] * 0.1,
                                          'timer'         => $data['timer'],
-                                         'config'        => $data['config'] ?? null,
+                                         'config'        => $data['config'] ? json_encode($data['config']) : null,
                                      ]);
 
             $match->participants()->create([
@@ -74,7 +73,7 @@
                                     'match_id' => $match->id,
                                 ]);
 
-            return redirect()->route('matches.show', $match->id)->with('success', 'Match created.');
+            return redirect()->back()->with('success', 'Match created.');
         }
 
         public function show(Matches $match)

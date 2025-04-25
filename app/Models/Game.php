@@ -11,7 +11,8 @@ class Game extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public function matches()
+    protected $guarded = [];
+    public function matches(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Matches::class);
     }
