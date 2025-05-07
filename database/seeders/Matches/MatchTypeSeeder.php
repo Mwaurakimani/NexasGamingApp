@@ -1,9 +1,8 @@
 <?php
 
-    namespace Database\Seeders;
+    namespace Database\Seeders\Matches;
 
     use App\Models\MatchType;
-    use Illuminate\Database\Console\Seeds\WithoutModelEvents;
     use Illuminate\Database\Seeder;
 
     class MatchTypeSeeder extends Seeder {
@@ -12,7 +11,6 @@
          */
         public function run(): void
         {
-
             if (!MatchType::where('name', '1 v 1')->first()) {
                 $one_v_one = [
                     'name'        => '1 v 1',
@@ -22,7 +20,17 @@
                 ];
 
                 MatchType::create($one_v_one);
+            }
 
+            if (!MatchType::where('name', '2 v 2')->first()) {
+                $one_v_one = [
+                    'name'        => '2 v 2',
+                    'slug'        => '2-v-2',
+                    'min_players' => '4',
+                    'max_players' => '4',
+                ];
+
+                MatchType::create($one_v_one);
             }
         }
     }

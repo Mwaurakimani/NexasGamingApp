@@ -11,6 +11,8 @@ class MatchLog extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $guarded = [];
+
     public function match()
     {
         return $this->belongsTo(Matches::class);

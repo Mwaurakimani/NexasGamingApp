@@ -1,7 +1,6 @@
 <?php
 
     use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\DashboardController;
     use App\Http\Controllers\Platform\Game\GameController;
     use App\Http\Controllers\Platform\User\AccountController;
     use App\Http\Controllers\Platform\Match\MatchesController;
@@ -9,6 +8,7 @@
     use App\Http\Controllers\Platform\Match\MatchLogController;
     use App\Http\Controllers\Platform\Match\MatchTypeController;
     use App\Http\Controllers\Platform\Wallet\TransactionController;
+    use App\Http\Controllers\DashboardsControllers\DashboardController;
     use App\Http\Controllers\Platform\Match\MatchParticipantController;
     use App\Http\Controllers\Admin\UsersController as AdminUsersController;
 
@@ -54,6 +54,8 @@
     Route::resource('wallets', WalletController::class)->only(['index', 'show']);
     Route::resource('transactions', TransactionController::class)->only(['index', 'store']);
 
+
+    include_once "chessMechanics.php";
 
 
 

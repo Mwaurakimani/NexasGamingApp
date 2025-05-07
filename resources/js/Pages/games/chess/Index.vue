@@ -1,6 +1,7 @@
 <script setup>
 
 import ChessGame from "@/modules/games/chess/ChessGame.vue";
+const props = defineProps(['match','logs'])
 
 const virtualUser = {
     id: 99,
@@ -22,10 +23,11 @@ const challenge = {
         rating: 1600,
     }
 }
+
 </script>
 
 <template>
     <div class="min-h-screen bg-black text-white">
-        <ChessGame :user="virtualUser" :challenge="challenge" />
+        <ChessGame :user="virtualUser" :challenge="challenge" :match :logs />
     </div>
 </template>

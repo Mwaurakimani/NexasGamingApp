@@ -12,6 +12,8 @@ import ModeratorDashboardLayout from "@/Layouts/DashboardLayoutsTemplates/Modera
 import ManagerDashboardLayout from "@/Layouts/DashboardLayoutsTemplates/ManagerDashboardLayout.vue";
 import AdminDashboardLayout from "@/Layouts/DashboardLayoutsTemplates/AdminDashboardLayout.vue";
 
+//Global Compatibles
+
 //page components -> Dashboard
 
 const pinia = createPinia()

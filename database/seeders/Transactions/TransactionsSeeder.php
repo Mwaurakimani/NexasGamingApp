@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Transactions;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class MatchLogSeeder extends Seeder
+class TransactionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

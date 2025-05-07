@@ -1,6 +1,6 @@
 <template>
     <section class="game-listings container py-4">
-        <h2 class="listing-title mb-3">{{ title }}</h2>
+        <h2 class="listing-title text-center mb-3">{{ title }}</h2>
         <div class="games-row">
             <GameCard v-for="game in games" :key="game.id" :game="game"/>
         </div>
@@ -28,6 +28,7 @@ defineProps({
 
     .games-row {
         display: flex;
+        justify-content: center;
         flex-direction: row;
         overflow-x: auto;
         gap: 1rem;

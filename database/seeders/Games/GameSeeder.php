@@ -1,11 +1,8 @@
 <?php
 
-    namespace Database\Seeders;
+    namespace Database\Seeders\Games;
 
     use App\Models\Game;
-    use Illuminate\Support\Facades\Schema;
-    use Illuminate\Database\Schema\Blueprint;
-    use Illuminate\Database\Console\Seeds\WithoutModelEvents;
     use Illuminate\Database\Seeder;
 
     class GameSeeder extends Seeder {
@@ -26,6 +23,16 @@
                 Game::create($chess);
             }
 
+            if (!Game::where('name', 'Call Of Duty Mobile')->first()) {
+                $chess = [
+                    'name'      => 'Call Of Duty Mobile',
+                    'slug'      => 'CODM',
+                    'category'  => 'mobile',
+                    'is_active' => true,
+                    'config'    => json_encode([])
+                ];
 
+                Game::create($chess);
+            }
         }
     }

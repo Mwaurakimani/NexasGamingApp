@@ -44,7 +44,19 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3'
+import {Link, usePage} from '@inertiajs/vue3'
+import {onMounted} from "vue";
+import {useNotificationStore} from "@/stores/notificationStore.js";
+import {goFullScreen} from "@/Composables/GlobalHelpers.js";
+
+const notificationStore = useNotificationStore()
+const page = usePage()
+onMounted(() => {
+    if (page.props.auth && page.props.auth.user) {
+        notificationStore.subscribe()
+    }
+    goFullScreen()
+})
 </script>
 
 <style scoped>

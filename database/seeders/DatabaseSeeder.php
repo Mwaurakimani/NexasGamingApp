@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Illuminate\Database\Seeder;
+use Database\Seeders\Games\GameSeeder;
+use Database\Seeders\Users\UserSeeder;
+use Database\Seeders\Matches\MatchTypeSeeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {

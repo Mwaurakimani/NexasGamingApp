@@ -1,14 +1,13 @@
 <script setup>
 import {Link, router, usePage} from "@inertiajs/vue3";
 import {computed, inject, ref} from "vue";
+import {goFullScreen} from "@/Composables/GlobalHelpers.js";
 
 
 const showDropdown = ref(false)
 const page = usePage()
 const providedTitle = inject('pageTitle', null)
 const role = usePage().props.auth.user.role
-
-console.log(usePage().props.impersonated)
 
 const showBackButton = computed(() => page.url !== '/dashboard')
 
@@ -22,20 +21,17 @@ function toggleDropdown() {
 }
 
 function logout() {
-    showDropdown.value = false // 👈 close dropdown first
-    router.post(route('logout'), {
-        onSuccess: () => router.get('/')
-    })
+    window.Echo.leave('presence-users')
+    showDropdown.value = false
+    router.post(route('logout'), {onSuccess: () => router.get('/')})
 }
 
 function toggleFullscreen() {
-    showDropdown.value = false // 👈 close dropdown first
+    showDropdown.value = false
 
     const el = document.documentElement
     if (!document.fullscreenElement) {
-        el.requestFullscreen?.().catch((err) =>
-            console.warn('Fullscreen request failed:', err)
-        )
+        goFullScreen()
     } else {
         document.exitFullscreen?.()
     }
@@ -48,7 +44,8 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-    <nav class="top-nav sticky-top px-4 flex items-center justify-end h-[60px] w-full bg-black border-b border-white/10">
+    <nav
+        class="top-nav sticky-top px-4 flex items-center justify-end h-[60px] w-full bg-black border-b border-white/10">
         <div class="flex items-center gap-2 text-white text-sm flex-1">
             <button
                 v-if="showBackButton"
@@ -57,19 +54,18 @@ const userInitials = computed(() => {
             >
                 🔙
             </button>
-            <h4 class="capitalize h4 p-0 m-0">{{ pageTitle }}</h4>
+            <h6 class="capitalize h6 p-0 m-0">{{ pageTitle }}</h6>
         </div>
-        <div class="flex items-center gap-4 text-white text-sm">
+        <div class="flex items-center gap-3 text-white text-sm">
             <!-- Wallet -->
-            <div class="cursor-pointer hover:opacity-80">
+            <div class="cursor-pointer text-xs hover:opacity-80">
                 💰 KES 3,500
             </div>
 
             <!-- Notifications -->
             <div class="relative cursor-pointer hover:opacity-80">
                 🔔
-                <span
-                    class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">3</span>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1 rounded-full">3</span>
             </div>
 
             <!-- Profile -->
@@ -91,7 +87,7 @@ const userInitials = computed(() => {
                             <span>🏠 Home</span>
                         </Link>
                         <Link as="li" href="/profile" class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
-                            <span >👤 Profile</span>
+                            <span>👤 Profile</span>
                         </Link>
                         <li class="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                             <div @click.stop="logout">

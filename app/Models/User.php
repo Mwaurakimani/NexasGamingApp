@@ -9,6 +9,8 @@
     use App\Platform\Classes\Users\UserStatus;
     use Laravel\Fortify\TwoFactorAuthenticatable;
     use Illuminate\Database\Eloquent\Casts\Attribute;
+    use Illuminate\Database\Eloquent\Relations\HasOne;
+    use Illuminate\Database\Eloquent\Relations\HasMany;
     use Illuminate\Database\Eloquent\Factories\HasFactory;
     use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -66,12 +68,10 @@
             'password'          => 'hashed',
         ];
 
-        public function matches()
+        public function matches(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
         {
-            return $this
-                ->belongsToMany(Matches::class, 'participants', 'user_id', 'match_id')
-                ->withPivot('grouped', 'grouped_name', 'user_score', 'moderator_score', 'status', 'payout', 'results')
-                ->withTimestamps();
+            return $this->belongsToMany(Matches::class, 'match_participants', 'user_id', 'match_id')
+                ->withPivot( 'matches.status');
         }
 
         protected function isActive(): Attribute
@@ -86,6 +86,11 @@
         {
             $allowed = explode('|', $roles);
             return in_array($this->role, $allowed, true);
+        }
+
+        public function wallet(): HasOne
+        {
+            return $this->hasOne(Wallet::class);
         }
 
     }

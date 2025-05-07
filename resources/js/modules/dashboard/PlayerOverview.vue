@@ -1,25 +1,15 @@
 <script setup>
 
-// Sample data
-const stats = [
-    { label: 'Wallet Balance', icon: '💰', value: 'KES 3,500' },
-    { label: 'Games Played', icon: '🎮', value: '42' },
-    { label: 'Win Rate', icon: '📈', value: '68%' },
-    { label: 'Rank', icon: '🏆', value: 'Gold II' },
-]
+import {usePage} from "@inertiajs/vue3";
+import {reactive} from "vue";
 
-const recentMatches = [
-    { id: 1, game: 'Chess', result: 'Win', stake: 300, status: '✅' },
-    { id: 2, game: 'Monopoly', result: 'Loss', stake: 200, status: '❌' },
-    { id: 3, game: 'Draughts', result: 'Win', stake: 150, status: '✅' },
-    { id: 4, game: 'Snake & Ladders', result: 'Pending', stake: 100, status: '⏳' },
-]
+const props = usePage().props
 
-const announcements = [
-    '🎉 Weekend Tournament begins Friday at 6 PM',
-    '💰 Double XP event live until Sunday',
-    '⚠ System maintenance scheduled for Monday 2 AM',
-]
+const stats = reactive(props.stats)
+
+const recentMatches = reactive(props.recentMatches)
+
+const announcements = reactive(props.announcements)
 </script>
 
 <template>
@@ -41,14 +31,13 @@ const announcements = [
         </section>
 
         <!-- 🧾 Recent Matches -->
-        <section class="w-100">
+        <section class="w-100 overflow-hidden">
             <h2 class="text-xl font-semibold mb-4">Recent Matches</h2>
             <div class="overflow-x-auto shadow">
-                <table class="w-full table-auto text-left bg-white rounded shadow">
+                <table v-if="recentMatches.length > 0" class="w-full table-auto text-left bg-white rounded shadow">
                     <thead>
                     <tr class="bg-gray-100 text-sm text-gray-700">
                         <th class="px-4 py-2">Game</th>
-                        <th class="px-4 py-2">Result</th>
                         <th class="px-4 py-2">Stake</th>
                         <th class="px-4 py-2">Status</th>
                     </tr>
@@ -60,17 +49,19 @@ const announcements = [
                         class="border-t text-sm"
                     >
                         <td class="px-4 py-2">{{ match.game }}</td>
-                        <td class="px-4 py-2">{{ match.result }}</td>
                         <td class="px-4 py-2">KES {{ match.stake }}</td>
                         <td class="px-4 py-2">{{ match.status }}</td>
                     </tr>
                     </tbody>
                 </table>
+                <p v-else class="w-full bg-gray-100 rounded py-4 h4 text-center text-gray-700">
+                    No Matches found
+                </p>
             </div>
         </section>
 
         <!-- 🚀 Action Panel -->
-        <section class="space-y-4">
+        <section class="space-y-4" v-if="false">
             <h2 class="text-xl font-semibold">Get in the Game</h2>
             <div class="flex flex-wrap gap-4">
                 <a
@@ -104,7 +95,7 @@ const announcements = [
 
 
         <!-- 📢 Announcements -->
-        <section>
+        <section v-if="false">
             <h2 class="text-xl font-semibold mb-2">Announcements</h2>
             <ul class="space-y-2 text-sm">
                 <li

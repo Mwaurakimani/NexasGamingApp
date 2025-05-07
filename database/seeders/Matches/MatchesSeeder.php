@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Matches;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class WithdrawalsSeeder extends Seeder
+class MatchesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
